@@ -1,0 +1,50 @@
+# Ограничения RAM для VPS ~6GB. Подключается автоматически: docker compose up -d
+# https://docs.docker.com/compose/how-tos/resource-constraints/
+services:
+  analytics:
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+        reservations:
+          memory: 128M
+  studio:
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+  kong:
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+  db:
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+  supavisor:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+  realtime:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+  meta:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+  storage:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+  functions:
+    deploy:
+      resources:
+        limits:
+          memory: 256M

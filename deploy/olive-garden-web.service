@@ -1,0 +1,22 @@
+# Скопировать на сервер: sudo cp deploy/olive-garden-web.service /etc/systemd/system/
+# Затем: sudo systemctl daemon-reload && sudo systemctl enable --now olive-garden-web
+#
+# Перед первым запуском: cd apps/web && npm ci && npm run build
+
+[Unit]
+Description=Olive Garden Next.js (olivegarden.ruimiranda.com)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/olive_garden_cons/apps/web
+Environment=NODE_ENV=production
+EnvironmentFile=/root/olive_garden_cons/apps/web/.env
+ExecStart=/root/olive_garden_cons/apps/web/node_modules/.bin/next start -p 3000 -H 127.0.0.1
+Restart=on-failure
+RestartSec=5
+MemoryMax=900M
+
+[Install]
+WantedBy=multi-user.target

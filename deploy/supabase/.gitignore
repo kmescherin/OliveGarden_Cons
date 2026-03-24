@@ -1,0 +1,6 @@
+.env
+.env.old
+volumes/db/data/
+volumes/storage/
+volumes/functions/main/
+*.log
