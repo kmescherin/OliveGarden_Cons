@@ -63,5 +63,23 @@ export async function updateSuggestionStatus(
   }
   revalidatePath(`/${locale}/dashboard/suggestions`);
   revalidatePath(`/${locale}/board/suggestions`);
+
+  const { data: sug } = await supabase
+    .from("suggestions")
+    .select("user_id")
+    .eq("id", parsed.data.id)
+    .maybeSingle();
+  if (sug) {
+    const { createNotification } = await import("@/features/notifications/create-notification");
+    await createNotification({
+      userId: sug.user_id,
+      type: "suggestion_status_changed",
+      title: `Suggestion ${parsed.data.status}`,
+      body: parsed.data.boardNote || undefined,
+      entityType: "suggestion",
+      entityId: parsed.data.id,
+    });
+  }
+
   return { ok: true as const };
 }

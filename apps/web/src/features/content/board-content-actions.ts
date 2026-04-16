@@ -95,6 +95,17 @@ export async function upsertAnnouncement(values: {
   }
   revalidatePath("/info/announcements");
   revalidatePath("/board/content");
+
+  if (!values.id) {
+    const { createNotificationForAllResidents } = await import("@/features/notifications/create-notification");
+    await createNotificationForAllResidents({
+      type: "announcement_new",
+      title: values.title,
+      body: values.body?.slice(0, 200),
+      entityType: "announcement",
+    });
+  }
+
   return { ok: true as const };
 }
 
