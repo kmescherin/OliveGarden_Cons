@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -41,6 +42,18 @@ export async function ServiceRequestsList() {
     );
   }
 
+  const allPaths = rows.flatMap((r) => r.photo_paths ?? []);
+  const urlMap = new Map<string, string>();
+  if (allPaths.length > 0) {
+    const admin = createAdminClient();
+    await Promise.all(
+      allPaths.map(async (p) => {
+        const { data } = await admin.storage.from("service-photos").createSignedUrl(p, 3600);
+        if (data) urlMap.set(p, data.signedUrl);
+      }),
+    );
+  }
+
   return (
     <ul className="space-y-3">
       {rows.map((r) => (
@@ -58,7 +71,21 @@ export async function ServiceRequestsList() {
               {new Date(r.created_at).toLocaleString()}
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-sm">{r.description}</CardContent>
+          <CardContent className="space-y-2">
+            <p className="text-sm">{r.description}</p>
+            {(r.photo_paths ?? []).length > 0 && (
+              <div className="flex gap-2">
+                {(r.photo_paths ?? []).map((p: string, i: number) => (
+                  <img
+                    key={i}
+                    src={urlMap.get(p)}
+                    alt={`Photo ${i + 1}`}
+                    className="h-16 w-16 rounded object-cover"
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
         </Card>
       ))}
     </ul>
