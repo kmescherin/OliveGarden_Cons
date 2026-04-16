@@ -79,6 +79,14 @@ export function UserMenu({
               <FileText className="mr-2 h-4 w-4" />
               {t("content")}
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/board/services")}>
+              <Wrench className="mr-2 h-4 w-4" />
+              {t("boardServices")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/board/suggestions")}>
+              <ClipboardList className="mr-2 h-4 w-4" />
+              {t("boardSuggestions")}
+            </DropdownMenuItem>
           </>
         ) : null}
         <DropdownMenuSeparator />
