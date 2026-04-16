@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
 import type { AppRole } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
+import { grantRoleSchema, grantRoleByEmailSchema } from "@/lib/validations";
 
 async function assertAdmin() {
   const f = await getStaffFlags();
@@ -45,13 +46,18 @@ export async function grantAppRole(
   userId: string,
   role: Extract<AppRole, "board" | "admin">,
 ) {
+  const parsed = grantRoleSchema.safeParse({ userId, role });
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   try {
     await assertAdmin();
   } catch {
     return { ok: false as const, error: "forbidden" };
   }
   const admin = createAdminClient();
-  const { error } = await admin.from("user_roles").insert({ user_id: userId, role });
+  const { error } = await admin.from("user_roles").insert({ user_id: parsed.data.userId, role: parsed.data.role });
   if (error) {
     if (error.code === "23505") {
       return { ok: true as const };
@@ -67,17 +73,22 @@ export async function revokeAppRole(
   userId: string,
   role: Extract<AppRole, "board" | "admin">,
 ) {
+  const parsed = grantRoleSchema.safeParse({ userId, role });
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   try {
     await assertAdmin();
   } catch {
     return { ok: false as const, error: "forbidden" };
   }
-  if (role === "admin") {
+  if (parsed.data.role === "admin") {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user?.id === userId) {
+    if (user?.id === parsed.data.userId) {
       const n = await countAdmins();
       if (n <= 1) {
         return { ok: false as const, error: "last_admin" };
@@ -88,8 +99,8 @@ export async function revokeAppRole(
   const { error } = await admin
     .from("user_roles")
     .delete()
-    .eq("user_id", userId)
-    .eq("role", role);
+    .eq("user_id", parsed.data.userId)
+    .eq("role", parsed.data.role);
   if (error) {
     return { ok: false as const, error: error.message };
   }
@@ -102,15 +113,17 @@ export async function grantRoleByEmail(
   email: string,
   role: Extract<AppRole, "board" | "admin">,
 ) {
+  const parsed = grantRoleByEmailSchema.safeParse({ email, role });
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   try {
     await assertAdmin();
   } catch {
     return { ok: false as const, error: "forbidden" };
   }
-  const normalized = email.trim().toLowerCase();
-  if (!normalized || !normalized.includes("@")) {
-    return { ok: false as const, error: "bad_email" };
-  }
+  const normalized = parsed.data.email.trim().toLowerCase();
   let users: User[];
   try {
     users = await listAuthUsersPages();
@@ -124,7 +137,7 @@ export async function grantRoleByEmail(
   if (!u) {
     return { ok: false as const, error: "user_not_found" };
   }
-  return grantAppRole(locale, u.id, role);
+  return grantAppRole(locale, u.id, parsed.data.role);
 }
 
 export async function loadAdminUsersForPage() {
