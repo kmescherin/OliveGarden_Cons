@@ -64,6 +64,12 @@ export default async function DashboardLayout({ children, params }: Props) {
             {t("suggestions")}
           </Link>
           <Link
+            href="/dashboard/notifications"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            {t("notifications")}
+          </Link>
+          <Link
             href="/info/rules"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
           >

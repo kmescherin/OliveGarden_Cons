@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { MenuIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { UserMenu } from "@/components/user-menu";
+import { NotificationBell } from "@/components/notification-bell";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -67,6 +68,7 @@ export function SiteHeaderClient({
         {t("dashboard")}
       </Link>
       <div className="flex justify-start pt-2 md:contents md:pt-0">
+        <NotificationBell />
         <UserMenu isBoard={isBoard} isAdmin={isAdmin} />
       </div>
     </>
