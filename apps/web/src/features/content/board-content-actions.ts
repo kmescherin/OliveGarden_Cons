@@ -2,6 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import {
+  contentPageSchema,
+  socialZoneSchema,
+  announcementSchema,
+  deleteByIdSchema,
+  boardMemberSchema,
+} from "@/lib/validations";
 
 export async function upsertContentPage(values: {
   slug: string;
@@ -9,13 +16,18 @@ export async function upsertContentPage(values: {
   body: string;
   visibility: "public" | "residents";
 }) {
+  const parsed = contentPageSchema.safeParse(values);
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.from("content_pages").upsert(
     {
-      slug: values.slug,
-      title: values.title,
-      body: values.body,
-      visibility: values.visibility,
+      slug: parsed.data.slug,
+      title: parsed.data.title,
+      body: parsed.data.body,
+      visibility: parsed.data.visibility,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "slug" },
@@ -35,15 +47,20 @@ export async function upsertSocialZone(values: {
   schedule: string;
   sort_order: number;
 }) {
+  const parsed = socialZoneSchema.safeParse(values);
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
   const row = {
-    name: values.name,
-    description: values.description,
-    schedule: values.schedule,
-    sort_order: values.sort_order,
+    name: parsed.data.name,
+    description: parsed.data.description,
+    schedule: parsed.data.schedule,
+    sort_order: parsed.data.sort_order,
   };
-  const { error } = values.id
-    ? await supabase.from("social_zones").update(row).eq("id", values.id)
+  const { error } = parsed.data.id
+    ? await supabase.from("social_zones").update(row).eq("id", parsed.data.id)
     : await supabase.from("social_zones").insert(row);
   if (error) {
     return { ok: false as const, error: error.message };
@@ -59,14 +76,19 @@ export async function upsertAnnouncement(values: {
   body: string;
   visibility: "public" | "residents";
 }) {
+  const parsed = announcementSchema.safeParse(values);
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
   const row = {
-    title: values.title,
-    body: values.body,
-    visibility: values.visibility,
+    title: parsed.data.title,
+    body: parsed.data.body,
+    visibility: parsed.data.visibility,
   };
-  const { error } = values.id
-    ? await supabase.from("announcements").update(row).eq("id", values.id)
+  const { error } = parsed.data.id
+    ? await supabase.from("announcements").update(row).eq("id", parsed.data.id)
     : await supabase.from("announcements").insert(row);
   if (error) {
     return { ok: false as const, error: error.message };
@@ -77,8 +99,13 @@ export async function upsertAnnouncement(values: {
 }
 
 export async function deleteAnnouncement(id: string) {
+  const parsed = deleteByIdSchema.safeParse({ id });
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
-  const { error } = await supabase.from("announcements").delete().eq("id", id);
+  const { error } = await supabase.from("announcements").delete().eq("id", parsed.data.id);
   if (error) {
     return { ok: false as const, error: error.message };
   }
@@ -95,16 +122,21 @@ export async function upsertBoardMember(values: {
   email: string;
   sort_order: number;
 }) {
+  const parsed = boardMemberSchema.safeParse(values);
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
   const row = {
-    full_name: values.full_name,
-    role_title: values.role_title,
-    phone: values.phone,
-    email: values.email,
-    sort_order: values.sort_order,
+    full_name: parsed.data.full_name,
+    role_title: parsed.data.role_title,
+    phone: parsed.data.phone,
+    email: parsed.data.email,
+    sort_order: parsed.data.sort_order,
   };
-  const { error } = values.id
-    ? await supabase.from("board_members").update(row).eq("id", values.id)
+  const { error } = parsed.data.id
+    ? await supabase.from("board_members").update(row).eq("id", parsed.data.id)
     : await supabase.from("board_members").insert(row);
   if (error) {
     return { ok: false as const, error: error.message };
@@ -115,8 +147,13 @@ export async function upsertBoardMember(values: {
 }
 
 export async function deleteBoardMember(id: string) {
+  const parsed = deleteByIdSchema.safeParse({ id });
+  if (!parsed.success) {
+    return { ok: false as const, error: "invalid_input" };
+  }
+
   const supabase = await createClient();
-  const { error } = await supabase.from("board_members").delete().eq("id", id);
+  const { error } = await supabase.from("board_members").delete().eq("id", parsed.data.id);
   if (error) {
     return { ok: false as const, error: error.message };
   }
