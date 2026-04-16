@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { updateServiceRequestStatus } from "@/features/services/service-request-actions";
+import { EmptyState } from "@/components/empty-state";
 
 const statusOrder = { new: 0, in_progress: 1, done: 2, cancelled: 3 } as const;
 
@@ -34,7 +35,7 @@ export async function BoardServiceQueue() {
     .order("created_at", { ascending: false });
 
   if (!rows?.length) {
-    return <p className="text-sm text-muted-foreground">—</p>;
+    return <EmptyState title="No pending requests" description="All service requests have been handled" />;
   }
 
   const sorted = [...rows].sort(

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { Notification } from "@/types/database";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/empty-state";
 
 export function NotificationsList() {
   const t = useTranslations("Notifications");
@@ -51,7 +52,7 @@ export function NotificationsList() {
         )}
       </div>
       {items.length === 0 && (
-        <p className="text-muted-foreground">{t("none")}</p>
+        <EmptyState title="No notifications" description="You're all caught up" />
       )}
       {items.map((n) => (
         <div
