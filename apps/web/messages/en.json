@@ -79,7 +79,9 @@
     "sendMagicLink": "Send link",
     "magicLinkSent": "Check your inbox and open the link.",
     "confirmEmail": "Account created. Confirm your email via the message, then sign in.",
-    "registerSuccess": "Registration successful."
+    "registerSuccess": "Registration successful.",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordRequirements": "Password must contain letters and numbers"
   },
   "Pending": {
     "title": "Awaiting approval",
