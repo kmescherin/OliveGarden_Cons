@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { ragChatSchema } from "@/lib/validations";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -23,16 +25,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const rl = checkRateLimit(`rag:${user.id}`, RATE_LIMITS.ragChat);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "rate_limited:ragChat" }, { status: 429 });
+  }
+
   let body: { question?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const question = body.question?.trim();
-  if (!question) {
-    return NextResponse.json({ error: "Empty question" }, { status: 400 });
+  const parsed = ragChatSchema.safeParse({ question: body.question?.trim() });
+  if (!parsed.success) {
+    return NextResponse.json({ error: "invalid_input" }, { status: 400 });
   }
+  const question = parsed.data.question;
 
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!openaiKey) {
@@ -40,6 +48,7 @@ export async function POST(req: Request) {
       answer:
         "[Demo] Configure OPENAI_API_KEY and ingest documents. Question was: " +
         question.slice(0, 200),
+      sources: [],
     });
   }
 
@@ -83,6 +92,7 @@ export async function POST(req: Request) {
         answer:
           question +
           " — (Set SUPABASE_SERVICE_ROLE_KEY for vector search + LLM synthesis.)",
+        sources: [],
       },
     );
   }
@@ -102,9 +112,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const context = (chunks as { content: string }[] | null)
-    ?.map((c) => c.content)
-    .join("\n---\n");
+  const typedChunks = (chunks as { id: string; content: string; metadata: Record<string, unknown>; similarity: number }[] | null) ?? [];
+  const sources = typedChunks.map((c) => ({
+    document_title: (c.metadata?.document_title as string) ?? "Unknown",
+    relevance: Math.round(c.similarity * 100) / 100,
+    chunk_preview: c.content.slice(0, 150),
+  }));
+
+  const context = typedChunks.map((c) => c.content).join("\n---\n");
 
   const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -142,5 +157,5 @@ export async function POST(req: Request) {
   };
   const answer = chatJson.choices?.[0]?.message?.content ?? "";
 
-  return NextResponse.json({ answer });
+  return NextResponse.json({ answer, sources });
 }
