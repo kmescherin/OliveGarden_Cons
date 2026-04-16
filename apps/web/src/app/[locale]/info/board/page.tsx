@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
@@ -9,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail, Phone } from "lucide-react";
+import { CardGridSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -23,7 +25,8 @@ export default async function BoardPage({ params }: Props) {
     .order("sort_order");
 
   return (
-    <div className="space-y-6">
+    <Suspense fallback={<CardGridSkeleton count={4} />}>
+      <div className="space-y-6">
       <h1 className="text-3xl font-semibold">{t("board")}</h1>
       {(members ?? []).length === 0 ? (
         <p className="text-sm text-muted-foreground">—</p>
@@ -68,5 +71,6 @@ export default async function BoardPage({ params }: Props) {
         </ul>
       )}
     </div>
+    </Suspense>
   );
 }

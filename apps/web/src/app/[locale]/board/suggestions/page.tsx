@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -8,6 +9,7 @@ import { updateSuggestionStatus } from "@/features/suggestions/suggestion-action
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { PageSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -36,8 +38,9 @@ export default async function BoardSuggestionsPage({ params }: Props) {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader user={user} />
+    <Suspense fallback={<PageSkeleton />}>
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader user={user} />
       <main className="container flex-1 space-y-8 py-10">
         <h1 className="text-3xl font-semibold">{t("boardTitle")}</h1>
         {!suggestions?.length && (
@@ -59,6 +62,7 @@ export default async function BoardSuggestionsPage({ params }: Props) {
         ))}
       </main>
     </div>
+    </Suspense>
   );
 }
 

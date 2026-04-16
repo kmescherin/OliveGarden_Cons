@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -10,6 +11,8 @@ import {
   AnnouncementEditor,
   BoardMemberEditor,
 } from "@/features/content/board-content-forms";
+import { DocumentUploadForm } from "@/features/rag/document-upload-form";
+import { PageSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -49,10 +52,15 @@ export default async function BoardContentPage({ params }: Props) {
     .from("board_members")
     .select("*")
     .order("sort_order");
+  const { data: documents } = await supabase
+    .from("knowledge_documents")
+    .select("id, title, created_at")
+    .order("created_at", { ascending: false });
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader user={user} />
+    <Suspense fallback={<PageSkeleton />}>
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader user={user} />
       <main className="container flex-1 space-y-10 py-10">
         <h1 className="text-3xl font-semibold">{t("contentTitle")}</h1>
 
@@ -123,7 +131,12 @@ export default async function BoardContentPage({ params }: Props) {
             <BoardMemberEditor />
           </div>
         </section>
+
+        <section>
+          <DocumentUploadForm documents={documents ?? []} />
+        </section>
       </main>
     </div>
+    </Suspense>
   );
 }

@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { PageSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -21,9 +23,11 @@ export default async function RulesPage({ params }: Props) {
   }
 
   return (
-    <article className="max-w-3xl space-y-4">
-      <h1 className="text-3xl font-semibold">{page.title ?? t("rules")}</h1>
-      <div className="whitespace-pre-wrap text-muted-foreground">{page.body}</div>
-    </article>
+    <Suspense fallback={<PageSkeleton />}>
+      <article className="max-w-3xl space-y-4">
+        <h1 className="text-3xl font-semibold">{page.title ?? t("rules")}</h1>
+        <div className="whitespace-pre-wrap text-muted-foreground">{page.body}</div>
+      </article>
+    </Suspense>
   );
 }
