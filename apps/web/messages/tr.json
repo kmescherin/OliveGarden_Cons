@@ -79,7 +79,9 @@
     "sendMagicLink": "Bağlantı gönder",
     "magicLinkSent": "Gelen kutunuzu kontrol edin ve bağlantıya tıklayın.",
     "confirmEmail": "Hesap oluşturuldu. E-postadaki bağlantıyı onaylayın, ardından giriş yapın.",
-    "registerSuccess": "Kayıt tamamlandı."
+    "registerSuccess": "Kayıt tamamlandı.",
+    "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
+    "passwordRequirements": "Şifre harf ve rakam içermelidir"
   },
   "Pending": {
     "title": "Onay bekleniyor",

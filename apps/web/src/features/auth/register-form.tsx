@@ -26,6 +26,16 @@ export function RegisterForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    if (form.password.length < 8) {
+      toast.error(t("passwordTooShort"));
+      setLoading(false);
+      return;
+    }
+    if (!/[a-zA-Z]/.test(form.password) || !/[0-9]/.test(form.password)) {
+      toast.error(t("passwordRequirements"));
+      setLoading(false);
+      return;
+    }
     const supabase = createClient();
     const origin =
       typeof window !== "undefined" ? window.location.origin : "";
