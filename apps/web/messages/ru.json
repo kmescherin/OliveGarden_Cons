@@ -58,7 +58,10 @@
     "menu": "Меню",
     "language": "Язык",
     "profile": "Профиль",
-    "admin": "Админка"
+    "admin": "Админка",
+    "notifications": "Уведомления",
+    "boardSuggestions": "Предложения",
+    "boardServices": "Очередь заявок"
   },
   "Auth": {
     "loginTitle": "Вход",
@@ -198,7 +201,12 @@
     "zones": "Социальные зоны",
     "announcements": "Объявления",
     "boardContacts": "Контакты правления",
-    "board": "Члены правления"
+    "board": "Члены правления",
+    "knowledgeBase": "База знаний",
+    "uploadDocument": "Загрузить документ",
+    "documents": "Документы",
+    "delete": "Удалить",
+    "noDocuments": "Документы не загружены"
   },
   "Suggestions": {
     "title": "Предложения правлению",
@@ -208,7 +216,21 @@
     "details": "Подробности (необязательно)",
     "submit": "Отправить",
     "submitted": "Предложение отправлено.",
-    "titleRequired": "Укажите заголовок."
+    "titleRequired": "Укажите заголовок.",
+    "boardTitle": "Предложения жильцов",
+    "accept": "Принять",
+    "reject": "Отклонить",
+    "boardNote": "Комментарий правления",
+    "updateStatus": "Обновить"
+  },
+  "Notifications": {
+    "title": "Уведомления",
+    "markRead": "Прочитано",
+    "markAllRead": "Прочитать все",
+    "none": "Нет уведомлений",
+    "announcementNew": "Новое объявление",
+    "requestStatusChanged": "Статус заявки обновлён",
+    "suggestionStatusChanged": "Статус предложения обновлён"
   }
 }
 }

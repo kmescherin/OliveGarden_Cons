@@ -58,7 +58,10 @@
     "menu": "Menü",
     "language": "Dil",
     "profile": "Profil",
-    "admin": "Yönetim paneli"
+    "admin": "Yönetim paneli",
+    "notifications": "Bildirimler",
+    "boardSuggestions": "Öneriler",
+    "boardServices": "Hizmet Kuyruğu"
   },
   "Auth": {
     "loginTitle": "Giriş",
@@ -199,7 +202,12 @@
     "zones": "Sosyal alanlar",
     "announcements": "Duyurular",
     "boardContacts": "Yönetim iletişim",
-    "board": "Yönetim üyeleri"
+    "board": "Yönetim üyeleri",
+    "knowledgeBase": "Bilgi Bankası",
+    "uploadDocument": "Belge Yükle",
+    "documents": "Belgeler",
+    "delete": "Sil",
+    "noDocuments": "Henüz belge yüklenmedi"
   },
   "Suggestions": {
     "title": "Yönetime öneriler",
@@ -209,6 +217,20 @@
     "details": "Detaylar (isteğe bağlı)",
     "submit": "Gönder",
     "submitted": "Öneri gönderildi.",
-    "titleRequired": "Başlık gerekli."
+    "titleRequired": "Başlık gerekli.",
+    "boardTitle": "Site Sakini Önerileri",
+    "accept": "Kabul et",
+    "reject": "Reddet",
+    "boardNote": "Yönetim notu",
+    "updateStatus": "Güncelle"
+  },
+  "Notifications": {
+    "title": "Bildirimler",
+    "markRead": "Okundu",
+    "markAllRead": "Tümünü okundu işaretle",
+    "none": "Bildirim yok",
+    "announcementNew": "Yeni duyuru",
+    "requestStatusChanged": "Talep durumu güncellendi",
+    "suggestionStatusChanged": "Öneri durumu güncellendi"
   }
 }

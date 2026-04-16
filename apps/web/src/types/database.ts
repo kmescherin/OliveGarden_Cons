@@ -79,3 +79,17 @@ export type Suggestion = {
   created_at: string;
   updated_at: string;
 };
+
+export type NotificationType = "announcement_new" | "request_status_changed" | "suggestion_status_changed";
+
+export type Notification = {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  read: boolean;
+  entity_type: string | null;
+  entity_id: string | null;
+  created_at: string;
+};
