@@ -48,6 +48,24 @@ export async function updateServiceRequestStatus(
   }
   revalidatePath(`/${locale}/dashboard/services`);
   revalidatePath(`/${locale}/board/services`);
+
+  const { data: req } = await supabase
+    .from("service_requests")
+    .select("user_id")
+    .eq("id", parsed.data.requestId)
+    .maybeSingle();
+  if (req) {
+    const { createNotification } = await import("@/features/notifications/create-notification");
+    await createNotification({
+      userId: req.user_id,
+      type: "request_status_changed",
+      title: `Request ${parsed.data.status.replace("_", " ")}`,
+      body: `Your service request status has been updated to: ${parsed.data.status}`,
+      entityType: "service_request",
+      entityId: parsed.data.requestId,
+    });
+  }
+
   return { ok: true as const };
 }
 
