@@ -47,6 +47,7 @@
     "dashboard": "Dashboard",
     "services": "Services",
     "chat": "Assistant",
+    "suggestions": "Suggestions",
     "board": "Board",
     "moderation": "Approvals",
     "content": "Content",
@@ -166,6 +167,8 @@
     "cardModerationDesc": "Pending registrations.",
     "cardContentTitle": "Content",
     "cardContentDesc": "Rules, zones, announcements.",
+    "cardServicesTitle": "Service queue",
+    "cardServicesDesc": "Review and update resident requests.",
     "email": "Email",
     "name": "Name",
     "blockApt": "Block / Apt",
@@ -192,6 +195,18 @@
     "rules": "Rules",
     "zones": "Social areas",
     "announcements": "Announcements",
-    "boardContacts": "Board contacts"
+    "boardContacts": "Board contacts",
+    "board": "Board members"
+  },
+  "Suggestions": {
+    "title": "Suggestions for the board",
+    "new": "New suggestion",
+    "mySuggestions": "My suggestions",
+    "fieldTitle": "Title",
+    "details": "Details (optional)",
+    "submit": "Submit",
+    "submitted": "Suggestion sent.",
+    "titleRequired": "Title is required."
   }
+}
 }

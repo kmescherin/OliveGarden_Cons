@@ -8,37 +8,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  new: "default",
-  in_progress: "secondary",
-  done: "outline",
-  cancelled: "destructive",
-};
-
 const statusLabels: Record<string, string> = {
-  new: "New",
-  in_progress: "In Progress",
-  done: "Done",
-  cancelled: "Cancelled",
+  pending: "Under review",
+  accepted: "Accepted",
+  rejected: "Declined",
 };
 
-export async function ServiceRequestsList() {
+export async function SuggestionsList({ userId }: { userId: string }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
   const { data: rows } = await supabase
-    .from("service_requests")
-    .select("*, service_types(name)")
-    .eq("user_id", user.id)
+    .from("suggestions")
+    .select("*")
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (!rows?.length) {
-    return (
-      <p className="text-sm text-muted-foreground">—</p>
-    );
+    return <p className="text-sm text-muted-foreground">—</p>;
   }
 
   return (
@@ -47,10 +32,8 @@ export async function ServiceRequestsList() {
         <Card key={r.id}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between gap-2">
-              <CardTitle className="text-base">
-                {(r.service_types as { name: string } | null)?.name ?? "—"}
-              </CardTitle>
-              <Badge variant={statusVariant[r.status] ?? "secondary"}>
+              <CardTitle className="text-base">{r.title}</CardTitle>
+              <Badge variant={r.status === "accepted" ? "default" : r.status === "rejected" ? "destructive" : "secondary"}>
                 {statusLabels[r.status] ?? r.status}
               </Badge>
             </div>
@@ -58,7 +41,14 @@ export async function ServiceRequestsList() {
               {new Date(r.created_at).toLocaleString()}
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-sm">{r.description}</CardContent>
+          <CardContent className="space-y-2 text-sm">
+            {r.body && <p className="text-muted-foreground">{r.body}</p>}
+            {r.board_note && (
+              <p className="rounded-md bg-muted p-2 text-xs text-muted-foreground">
+                <strong>Board:</strong> {r.board_note}
+              </p>
+            )}
+          </CardContent>
         </Card>
       ))}
     </ul>

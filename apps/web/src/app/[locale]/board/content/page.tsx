@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import {
   ContentPageEditor,
   SocialZoneEditor,
+  AnnouncementEditor,
+  BoardMemberEditor,
 } from "@/features/content/board-content-forms";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -39,28 +41,88 @@ export default async function BoardContentPage({ params }: Props) {
     .from("social_zones")
     .select("*")
     .order("sort_order");
+  const { data: announcements } = await supabase
+    .from("announcements")
+    .select("*")
+    .order("published_at", { ascending: false });
+  const { data: boardMembers } = await supabase
+    .from("board_members")
+    .select("*")
+    .order("sort_order");
 
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
       <main className="container flex-1 space-y-10 py-10">
         <h1 className="text-3xl font-semibold">{t("contentTitle")}</h1>
-        <ContentPageEditor
-          slug="rules"
-          initial={{
-            title: rules?.title ?? "Rules",
-            body: rules?.body ?? "",
-            visibility: (rules?.visibility as "public" | "residents") ?? "public",
-          }}
-        />
-        <div>
+
+        <section>
+          <h2 className="mb-4 text-xl font-medium">Rules</h2>
+          <ContentPageEditor
+            slug="rules"
+            initial={{
+              title: rules?.title ?? "Rules",
+              body: rules?.body ?? "",
+              visibility: (rules?.visibility as "public" | "residents") ?? "public",
+            }}
+          />
+        </section>
+
+        <section>
           <h2 className="mb-4 text-xl font-medium">Social zones</h2>
           <div className="space-y-6">
             {(zones ?? []).map((z) => (
               <SocialZoneEditor key={z.id} zone={z} />
             ))}
+            <SocialZoneEditor
+              zone={{
+                id: "",
+                name: "",
+                description: null,
+                schedule: null,
+                sort_order: (zones?.length ?? 0) + 1,
+              }}
+            />
           </div>
-        </div>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-xl font-medium">Announcements</h2>
+          <div className="space-y-6">
+            {(announcements ?? []).map((a) => (
+              <AnnouncementEditor
+                key={a.id}
+                announcement={{
+                  id: a.id,
+                  title: a.title,
+                  body: a.body,
+                  visibility: a.visibility as "public" | "residents",
+                }}
+              />
+            ))}
+            <AnnouncementEditor />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-xl font-medium">Board members</h2>
+          <div className="space-y-6">
+            {(boardMembers ?? []).map((m) => (
+              <BoardMemberEditor
+                key={m.id}
+                member={{
+                  id: m.id,
+                  full_name: m.full_name,
+                  role_title: m.role_title,
+                  phone: m.phone,
+                  email: m.email,
+                  sort_order: m.sort_order,
+                }}
+              />
+            ))}
+            <BoardMemberEditor />
+          </div>
+        </section>
       </main>
     </div>
   );
