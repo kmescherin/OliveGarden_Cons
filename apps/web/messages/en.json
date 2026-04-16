@@ -58,7 +58,10 @@
     "menu": "Menu",
     "language": "Language",
     "profile": "Profile",
-    "admin": "Admin"
+    "admin": "Admin",
+    "notifications": "Notifications",
+    "boardSuggestions": "Suggestions",
+    "boardServices": "Service Queue"
   },
   "Auth": {
     "loginTitle": "Log in",
@@ -198,7 +201,12 @@
     "zones": "Social areas",
     "announcements": "Announcements",
     "boardContacts": "Board contacts",
-    "board": "Board members"
+    "board": "Board members",
+    "knowledgeBase": "Knowledge Base",
+    "uploadDocument": "Upload Document",
+    "documents": "Documents",
+    "delete": "Delete",
+    "noDocuments": "No documents uploaded yet"
   },
   "Suggestions": {
     "title": "Suggestions for the board",
@@ -208,7 +216,21 @@
     "details": "Details (optional)",
     "submit": "Submit",
     "submitted": "Suggestion sent.",
-    "titleRequired": "Title is required."
+    "titleRequired": "Title is required.",
+    "boardTitle": "Resident Suggestions",
+    "accept": "Accept",
+    "reject": "Reject",
+    "boardNote": "Board note",
+    "updateStatus": "Update"
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "none": "No notifications",
+    "announcementNew": "New announcement",
+    "requestStatusChanged": "Request status updated",
+    "suggestionStatusChanged": "Suggestion status updated"
   }
 }
 }
