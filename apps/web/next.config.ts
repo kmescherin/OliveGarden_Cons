@@ -12,15 +12,15 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  /* PWA uses webpack; disable turbopack on production build */
+  output: "standalone",
   experimental: {
     serverActions: {
       allowedOrigins: [
         "olivegarden.ruimiranda.com",
         "www.olivegarden.ruimiranda.com",
+        "localhost",
       ],
     },
-    /* Lowers peak RAM during `next build` (webpack) on small VPS */
     webpackMemoryOptimizations: true,
   },
 };
