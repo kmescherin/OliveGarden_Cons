@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { EmptyState } from "@/components/empty-state";
 
 const statusLabels: Record<string, string> = {
   pending: "Under review",
@@ -23,7 +24,7 @@ export async function SuggestionsList({ userId }: { userId: string }) {
     .order("created_at", { ascending: false });
 
   if (!rows?.length) {
-    return <p className="text-sm text-muted-foreground">—</p>;
+    return <EmptyState title="No suggestions yet" description="Your suggestions will appear here" />;
   }
 
   return (

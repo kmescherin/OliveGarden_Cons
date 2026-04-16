@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { PageSkeleton } from "@/components/loading-skeletons";
+import { EmptyState } from "@/components/empty-state";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -44,7 +45,7 @@ export default async function BoardSuggestionsPage({ params }: Props) {
       <main className="container flex-1 space-y-8 py-10">
         <h1 className="text-3xl font-semibold">{t("boardTitle")}</h1>
         {!suggestions?.length && (
-          <p className="text-muted-foreground">{t("none")}</p>
+          <EmptyState title="No suggestions from residents" description="Suggestions submitted by residents will appear here" />
         )}
         {suggestions?.map((s: Record<string, unknown>) => (
           <SuggestionCard

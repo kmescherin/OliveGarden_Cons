@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
 import {
   Card,
   CardContent,
@@ -38,7 +39,7 @@ export async function ServiceRequestsList() {
 
   if (!rows?.length) {
     return (
-      <p className="text-sm text-muted-foreground">—</p>
+      <EmptyState title="No requests yet" description="Your service requests will appear here" />
     );
   }
 
