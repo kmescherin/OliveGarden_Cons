@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { PhotoUpload } from "./photo-upload";
 
 export function ServiceRequestForm({
   serviceTypes,
@@ -29,6 +30,7 @@ export function ServiceRequestForm({
   const [description, setDescription] = useState("");
   const [preferredAt, setPreferredAt] = useState("");
   const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,20 +47,41 @@ export function ServiceRequestForm({
       setLoading(false);
       return;
     }
-    const { error } = await supabase.from("service_requests").insert({
-      user_id: user.id,
-      service_type_id: typeId,
-      description,
-      preferred_at: preferredAt ? new Date(preferredAt).toISOString() : null,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    const { data: inserted, error } = await supabase
+      .from("service_requests")
+      .insert({
+        user_id: user.id,
+        service_type_id: typeId,
+        description,
+        preferred_at: preferredAt ? new Date(preferredAt).toISOString() : null,
+      })
+      .select("id")
+      .single();
+    if (error || !inserted) {
+      setLoading(false);
+      toast.error(error?.message ?? "Insert failed");
       return;
     }
+    const photoPaths: string[] = [];
+    for (let i = 0; i < photos.length; i++) {
+      const ext = photos[i].name.split(".").pop() ?? "jpg";
+      const path = `${user.id}/${inserted.id}/${i}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from("service-photos")
+        .upload(path, photos[i], { upsert: true });
+      if (!uploadErr) photoPaths.push(path);
+    }
+    if (photoPaths.length > 0) {
+      await supabase
+        .from("service_requests")
+        .update({ photo_paths: photoPaths })
+        .eq("id", inserted.id);
+    }
+    setLoading(false);
     toast.success("OK");
     setDescription("");
     setPreferredAt("");
+    setPhotos([]);
     router.refresh();
   }
 
@@ -105,6 +128,7 @@ export function ServiceRequestForm({
           onChange={(e) => setPreferredAt(e.target.value)}
         />
       </div>
+      <PhotoUpload files={photos} onChange={setPhotos} />
       <Button type="submit" disabled={loading}>
         {t("submit")}
       </Button>
