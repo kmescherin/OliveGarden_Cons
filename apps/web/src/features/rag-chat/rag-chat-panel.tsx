@@ -7,7 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
-type Msg = { role: "user" | "assistant"; text: string };
+type Source = {
+  document_title: string;
+  relevance: number;
+  chunk_preview: string;
+};
+
+type Msg = {
+  role: "user" | "assistant";
+  text: string;
+  sources?: Source[];
+};
 
 export function RagChatPanel() {
   const t = useTranslations("Chat");
@@ -27,14 +37,22 @@ export function RagChatPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
-      const data = (await res.json()) as { answer?: string; error?: string };
+      const data = (await res.json()) as {
+        answer?: string;
+        error?: string;
+        sources?: Source[];
+      };
       if (!res.ok) {
         toast.error(data.error ?? "Error");
         return;
       }
       setMessages((m) => [
         ...m,
-        { role: "assistant", text: data.answer ?? "" },
+        {
+          role: "assistant",
+          text: data.answer ?? "",
+          sources: data.sources ?? [],
+        },
       ]);
     } catch {
       toast.error("Network");
@@ -57,6 +75,28 @@ export function RagChatPanel() {
               }
             >
               {m.text}
+              {m.role === "assistant" &&
+                m.sources &&
+                m.sources.length > 0 && (
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-xs text-muted-foreground">
+                      Sources ({m.sources.length})
+                    </summary>
+                    <div className="mt-1 space-y-1">
+                      {m.sources.map((s, si) => (
+                        <div key={si} className="rounded border p-2 text-xs">
+                          <span className="font-medium">{s.document_title}</span>
+                          <span className="ml-2 text-muted-foreground">
+                            ({s.relevance})
+                          </span>
+                          <p className="mt-1 text-muted-foreground">
+                            {s.chunk_preview}...
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                )}
             </li>
           ))}
         </ul>
