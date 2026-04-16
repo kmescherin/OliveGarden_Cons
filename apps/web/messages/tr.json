@@ -47,6 +47,7 @@
     "dashboard": "Panel",
     "services": "Hizmetler",
     "chat": "Asistan",
+    "suggestions": "Öneriler",
     "board": "Yönetim",
     "moderation": "Onaylar",
     "content": "İçerik",
@@ -149,7 +150,8 @@
     "auditWho": "Moderatör",
     "auditResident": "Başvuran",
     "auditDecision": "Karar",
-    "auditComment": "Yorum"
+    "auditComment": "Yorum",
+    "serviceQueueTitle": "Hizmet talep kuyruğu"
   },
   "Admin": {
     "title": "Yönetici paneli",
@@ -166,6 +168,8 @@
     "cardModerationDesc": "Bekleyen kayıtlar.",
     "cardContentTitle": "İçerik",
     "cardContentDesc": "Kurallar, alanlar, duyurular.",
+    "cardServicesTitle": "Hizmet kuyruğu",
+    "cardServicesDesc": "Sakin taleplerini gözden geçir ve güncelle.",
     "email": "E-posta",
     "name": "Ad soyad",
     "blockApt": "Blok / daire",
@@ -192,6 +196,17 @@
     "rules": "Kurallar",
     "zones": "Sosyal alanlar",
     "announcements": "Duyurular",
-    "boardContacts": "Yönetim iletişim"
+    "boardContacts": "Yönetim iletişim",
+    "board": "Yönetim üyeleri"
+  },
+  "Suggestions": {
+    "title": "Yönetime öneriler",
+    "new": "Yeni öneri",
+    "mySuggestions": "Önerilerim",
+    "fieldTitle": "Başlık",
+    "details": "Detaylar (isteğe bağlı)",
+    "submit": "Gönder",
+    "submitted": "Öneri gönderildi.",
+    "titleRequired": "Başlık gerekli."
   }
 }

@@ -47,6 +47,7 @@
     "dashboard": "Кабинет",
     "services": "Сервисы",
     "chat": "Ассистент",
+    "suggestions": "Предложения",
     "board": "Правление",
     "moderation": "Модерация",
     "content": "Контент",
@@ -166,6 +167,8 @@
     "cardModerationDesc": "Ожидающие регистрации.",
     "cardContentTitle": "Контент",
     "cardContentDesc": "Правила, зоны, объявления.",
+    "cardServicesTitle": "Очередь заявок",
+    "cardServicesDesc": "Просмотр и обновление заявок жильцов.",
     "email": "Email",
     "name": "ФИО",
     "blockApt": "Блок / кв.",
@@ -192,6 +195,18 @@
     "rules": "Правила",
     "zones": "Социальные зоны",
     "announcements": "Объявления",
-    "boardContacts": "Контакты правления"
+    "boardContacts": "Контакты правления",
+    "board": "Члены правления"
+  },
+  "Suggestions": {
+    "title": "Предложения правлению",
+    "new": "Новое предложение",
+    "mySuggestions": "Мои предложения",
+    "fieldTitle": "Заголовок",
+    "details": "Подробности (необязательно)",
+    "submit": "Отправить",
+    "submitted": "Предложение отправлено.",
+    "titleRequired": "Укажите заголовок."
   }
+}
 }

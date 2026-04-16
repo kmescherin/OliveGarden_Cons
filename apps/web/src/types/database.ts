@@ -51,3 +51,31 @@ export type ServiceRequest = {
   created_at: string;
   updated_at: string;
 };
+
+export type Announcement = {
+  id: string;
+  title: string;
+  body: string | null;
+  visibility: ContentVisibility;
+  published_at: string;
+};
+
+export type BoardMember = {
+  id: string;
+  full_name: string;
+  role_title: string | null;
+  phone: string | null;
+  email: string | null;
+  sort_order: number;
+};
+
+export type Suggestion = {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string | null;
+  status: string;
+  board_note: string | null;
+  created_at: string;
+  updated_at: string;
+};

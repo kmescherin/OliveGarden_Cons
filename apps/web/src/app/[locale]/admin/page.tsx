@@ -27,6 +27,11 @@ export default async function AdminHomePage({ params }: Props) {
       title: t("cardContentTitle"),
       desc: t("cardContentDesc"),
     },
+    {
+      href: "/board/services" as const,
+      title: t("cardServicesTitle"),
+      desc: t("cardServicesDesc"),
+    },
   ];
 
   return (

@@ -9,9 +9,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User } from "lucide-react";
+import {
+  User,
+  Wrench,
+  MessageSquare,
+  Shield,
+  ClipboardList,
+  FileText,
+  LogOut,
+} from "lucide-react";
 
 export function UserMenu({
   isBoard,
@@ -40,16 +49,21 @@ export function UserMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => router.push("/profile")}>
+          <User className="mr-2 h-4 w-4" />
           {t("profile")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/dashboard/services")}>
+          <Wrench className="mr-2 h-4 w-4" />
           {t("services")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/dashboard/chat")}>
+          <MessageSquare className="mr-2 h-4 w-4" />
           {t("chat")}
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {isAdmin ? (
           <DropdownMenuItem onClick={() => router.push("/admin")}>
+            <Shield className="mr-2 h-4 w-4" />
             {t("admin")}
           </DropdownMenuItem>
         ) : null}
@@ -58,14 +72,20 @@ export function UserMenu({
             <DropdownMenuItem
               onClick={() => router.push("/board/moderation")}
             >
+              <ClipboardList className="mr-2 h-4 w-4" />
               {t("moderation")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/board/content")}>
+              <FileText className="mr-2 h-4 w-4" />
               {t("content")}
             </DropdownMenuItem>
           </>
         ) : null}
-        <DropdownMenuItem onClick={signOut}>{t("logout")}</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={signOut}>
+          <LogOut className="mr-2 h-4 w-4" />
+          {t("logout")}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
