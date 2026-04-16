@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
@@ -7,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CardGridSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -21,7 +23,8 @@ export default async function ZonesPage({ params }: Props) {
     .order("sort_order");
 
   return (
-    <div className="space-y-6">
+    <Suspense fallback={<CardGridSkeleton count={4} />}>
+      <div className="space-y-6">
       <h1 className="text-3xl font-semibold">{t("zones")}</h1>
       <ul className="grid gap-4 md:grid-cols-2">
         {(zones ?? []).map((z) => (
@@ -41,5 +44,6 @@ export default async function ZonesPage({ params }: Props) {
         ))}
       </ul>
     </div>
+    </Suspense>
   );
 }

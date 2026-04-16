@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -8,6 +9,7 @@ import { getProfile } from "@/lib/profile";
 import { ModerationAuditSection } from "@/features/board-moderation/moderation-audit-section";
 import { PendingProfilesTable } from "@/features/board-moderation/pending-profiles-table";
 import type { Profile } from "@/types/database";
+import { PageSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -40,13 +42,15 @@ export default async function BoardModerationPage({ params }: Props) {
     .order("created_at", { ascending: true });
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader user={user} />
-      <main className="container flex-1 py-10">
-        <h1 className="mb-6 text-3xl font-semibold">{t("moderationTitle")}</h1>
-        <PendingProfilesTable rows={(pending ?? []) as Profile[]} />
-        <ModerationAuditSection locale={locale} />
-      </main>
-    </div>
+    <Suspense fallback={<PageSkeleton />}>
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader user={user} />
+        <main className="container flex-1 py-10">
+          <h1 className="mb-6 text-3xl font-semibold">{t("moderationTitle")}</h1>
+          <PendingProfilesTable rows={(pending ?? []) as Profile[]} />
+          <ModerationAuditSection locale={locale} />
+        </main>
+      </div>
+    </Suspense>
   );
 }
