@@ -1,4 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendEmail } from "@/lib/email";
+import { sendPushNotification } from "@/lib/web-push";
 import type { NotificationType } from "@/types/database";
 
 export async function createNotification(params: {
@@ -20,7 +22,23 @@ export async function createNotification(params: {
   });
   if (error) {
     console.error("Failed to create notification:", error.message);
+    return;
   }
+
+  const title = params.title;
+  const body = params.body ?? "";
+
+  sendPushNotification(params.userId, { title, body }).catch(() => {});
+
+  admin.auth.admin
+    .getUserById(params.userId)
+    .then(({ data }) => {
+      const email = data.user?.email;
+      if (email) {
+        return sendEmail({ to: email, subject: title, html: `<p>${body}</p>`, text: body });
+      }
+    })
+    .catch(() => {});
 }
 
 export async function createNotificationForAllResidents(params: {
@@ -48,4 +66,20 @@ export async function createNotificationForAllResidents(params: {
   }));
 
   await admin.from("notifications").insert(notifications);
+
+  const title = params.title;
+  const body = params.body ?? "";
+
+  for (const p of profiles) {
+    sendPushNotification(p.id, { title, body }).catch(() => {});
+    admin.auth.admin
+      .getUserById(p.id)
+      .then(({ data }) => {
+        const email = data.user?.email;
+        if (email) {
+          return sendEmail({ to: email, subject: title, html: `<p>${body}</p>`, text: body });
+        }
+      })
+      .catch(() => {});
+  }
 }
