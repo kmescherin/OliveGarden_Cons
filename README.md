@@ -1,77 +1,194 @@
-# Olive Garden — электронный консьерж ЖК
+# Olive Garden — консьерж ЖК
 
-Монорепозиторий: **Next.js (PWA)** + **Supabase** (Auth, Postgres, Storage, Edge Functions).
+Веб-приложение для управления жилым комплексом: заявки, голосования, парковка, уведомления, RAG-чат с документацией.
 
-**Репозиторий:** [github.com/kmescherin/OliveGarden_Cons](https://github.com/kmescherin/OliveGarden_Cons) — основная ветка разработки: **`dev`**.
+**Стек:** Next.js 15 (App Router, PWA) + Supabase (Auth, Postgres, Storage, Realtime, Edge Functions) + Docker.
 
-## Документация
+**Репозиторий:** [github.com/kmescherin/OliveGarden_Cons](https://github.com/kmescherin/OliveGarden_Cons)
 
-- [docs/TZ.md](docs/TZ.md) — ТЗ и модули M1–M7
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — архитектура, RLS, админка, nginx, ADR
+---
+
+## Что умеет
+
+### Жители
+
+| Возможность | Маршрут |
+|---|---|
+| Регистрация с модерацией | `/register` → ожидание одобрения → `/pending` |
+| Личный кабинет | `/dashboard` — карточки с быстрым доступом |
+| Сервисные заявки (с фото) | `/dashboard/services` — создание и отслеживание статуса |
+| Предложения и обратная связь | `/dashboard/suggestions` — подать и посмотреть ответы правления |
+| Парковка и доступ | `/dashboard/parking` — автомобили, гостевые пропуска, ключи/брелоки |
+| RAG-чат с документацией ЖК | `/dashboard/chat` — вопросы по уставу, правилам, решениям правления |
+| Уведомления (колокольчик) | `/dashboard/notifications` — in-app + push + email |
+| Профиль | `/profile` |
+
+### Правление и админы
+
+| Возможность | Маршрут |
+|---|---|
+| Модерация регистраций | `/board/moderation` |
+| Управление контентом | `/board/content` — объявления, члены правления, собрания, выборы, типы заявок, база знаний |
+| Очередь заявок | `/board/services` — смена статуса, фото |
+| Предложения жителей | `/board/suggestions` — ответы |
+| Парковка и доступ (все жители) | `/board/parking` — реестр авто, пропуска, ключи/брелоки |
+| Админ-панель (только admin) | `/admin` — роли пользователей, `/admin/users` |
+
+### Публичные страницы
+
+`/info/announcements` `/info/board` `/info/meetings` `/info/elections` `/info/rules` `/info/zones` — доступны без входа.
+
+---
+
+## Функционал в деталях
+
+### Собрания и решения
+
+- Собрания трёх типов: очередные, внеочередные, годовые
+- Статусный цикл: запланировано → завершено / отменено
+- Повестка, протокол, место, дата
+- Книга решений с привязкой к собранию
+- Уведомление всем жителям при создании нового собрания
+
+### Выборы
+
+- Кандидаты с программами и сортировкой
+- Год выборов, порядок отображения
+
+### Парковка и доступ
+
+- **Автомобили:** постоянные и временные, с номером и сроком действия. Житель добавляет сам, правление видит всех
+- **Гостевые пропуска:** автомобиль / пешеход, с датами и отменой
+- **Ключи и брелоки:** выдает правление, типы (входной, парковочный, кладовка, почта), статусы (выдан / возвращён / утерян)
+
+### Уведомления
+
+Три канала доставки:
+
+1. **In-app** — колокольчик, Realtime, список `/dashboard/notifications`
+2. **Email** — SMTP через Nodemailer, с fallback на console.log если не настроен
+3. **Web Push** — VAPID, подписка/отписка через API, автодоудаление просроченных подписок
+
+Типы уведомлений: новое объявление, статус заявки, статус предложения, новое собрание, новое решение, статус гостевого пропуска.
+
+### RAG-чат
+
+Загрузка PDF/TXT документов через `/board/content` → чанкинг (800 символов, overlap 100) → эмбеддинги через OpenAI `text-embedding-3-small` → векторный поиск в Supabase. Чат возвращает ответ с источниками и цитатами.
+
+### Типы заявок
+
+Настраиваемый каталог: правление создаёт типы заявок (сантехника, электрика, уборка и т.д.) с ключами и сортировкой.
+
+---
+
+## Архитектура
+
+```
+apps/web/                    Next.js App Router
+  src/features/*             Фичи: admin, auth, board, services, parking, elections, meetings, notifications, rag...
+  src/app/[locale]/*         Роуты с i18n (tr, ru, en)
+  src/app/api/*              API: health, rag/chat, rag/ingest, push/subscribe, push/unsubscribe
+  src/lib/*                  Shared: supabase clients, email, web-push, profile, rate-limiter
+  src/types/database.ts      TypeScript-типы всех таблиц
+
+deploy/
+  supabase/                  Self-hosted Supabase (Docker Compose)
+  nginx/                     Nginx-конфиг + SSL
+  olive-garden-web.service   systemd-юнит
+
+supabase/migrations/         Схема БД, RLS, RPC, триггеры
+deploy.sh                    Скрипт полного деплоя одной командой
+docker-compose.yml           Web + Nginx в общей Docker-сети
+```
+
+### Безопасность
+
+- **RLS** на всех таблицах: жители видят только свои данные, правление — все
+- **Zod-валидация** серверных экшенов
+- **Rate limiting** (in-memory sliding window) на критичные эндпоинты
+- **Security headers:** X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+- **JWT 24ч**, пароли от 8 символов (буквы + цифры), подтверждение email
+- **`SUPABASE_SERVICE_ROLE_KEY`** используется только в server actions/API routes, никогда на клиенте
+
+### i18n
+
+Три языка: турецкий (`/tr`), русский (`/ru`), английский (`/en`). Файлы переводов в `apps/web/messages/{tr,ru,en}.json`.
+
+---
 
 ## Быстрый старт
 
-### Веб
+### Локальная разработка
 
 ```bash
 cd apps/web
-cp .env.example .env.local
+cp .env.docker.example .env.local
 npm install
 npm run dev
 ```
 
-Откройте `http://localhost:3000/tr` (или `/ru`).
+Приложение на `http://localhost:3000/tr`.
 
-### Supabase (локально)
-
-Требуется **Docker**. Из **корня** репозитория:
+Для Supabase локально нужен **Docker**:
 
 ```bash
 npx supabase start
-npx supabase db reset   # миграции из supabase/migrations/ и supabase/seed.sql
+npx supabase db reset    # применяет все миграции из supabase/migrations/
 ```
 
-Переменные для Next.js: `npx supabase status -o env` — поля `API_URL` → `NEXT_PUBLIC_SUPABASE_URL`, `ANON_KEY` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SERVICE_ROLE_KEY` → `SUPABASE_SERVICE_ROLE_KEY`. Удобно положить в `apps/web/.env.local` вместе с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`.
+Переменные для Next.js:
 
-Если после `db reset` в конце появится **502** при перезапуске контейнеров, чаще всего стек всё равно поднимается: выполните `npx supabase status` и повторите команду при необходимости.
+```bash
+npx supabase status -o env
+```
 
-### Supabase (self-hosted Docker на сервере)
+`API_URL` → `NEXT_PUBLIC_SUPABASE_URL`, `ANON_KEY` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SERVICE_ROLE_KEY` → `SUPABASE_SERVICE_ROLE_KEY`. Всё это в `apps/web/.env.local` вместе с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`.
 
-Официальный стек лежит в [`deploy/supabase/`](deploy/supabase/) (копия [supabase/docker](https://github.com/supabase/supabase/tree/master/docker)).
+### Деплой на сервер одной командой
+
+```bash
+bash deploy.sh
+```
+
+Скрипт:
+- Проверит зависимости (docker, openssl, curl)
+- Запросит домен, SSL, SMTP
+- Сгенерирует секреты и VAPID-ключи
+- Поднимет Supabase, применит миграции
+- Соберёт и запустит Next.js + Nginx
+
+### Деплой вручную
+
+#### Supabase (self-hosted)
+
+Стек в [`deploy/supabase/`](deploy/supabase/) — копия [supabase/docker](https://github.com/supabase/supabase/tree/master/docker):
 
 ```bash
 cd deploy/supabase
 cp .env.example .env
 sh utils/generate-keys.sh --update-env
-# Заполните SITE_URL, SUPABASE_PUBLIC_URL, API_EXTERNAL_URL, KONG_*_PORT, POOLER_HOST_PORT — см. комментарии в .env
+# Заполните SITE_URL, SUPABASE_PUBLIC_URL, API_EXTERNAL_URL в .env
 docker compose up -d
-# Схема: применить все миграции по порядку из ../../supabase/migrations/
-# (или: из корня репозитория ./scripts/apply-supabase-migrations.sh при настроенном supabase link)
+
+# Миграции:
 for f in ../../supabase/migrations/*.sql; do
-  docker compose exec -T db psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$f"
+  docker compose exec -T db psql -U supabase_admin -d postgres -f - < "$f"
 done
 ```
 
-Kong слушает на хосте порт из `KONG_HTTP_PORT` (по умолчанию в шаблоне 8000; при конфликте смените). Nginx основного сайта должен проксировать пути `/auth/v1`, `/rest/v1`, `/realtime/v1`, `/storage/v1`, `/functions/v1` и т.д. на этот порт. Ключи `ANON_KEY` / `SERVICE_ROLE_KEY` из `deploy/supabase/.env` переносите в `apps/web/.env` как `NEXT_PUBLIC_SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY`; `NEXT_PUBLIC_SUPABASE_URL` — публичный HTTPS-URL того же домена, что и фронт.
+Kong слушает на порту из `KONG_HTTP_PORT` (обычно 8000). Nginx фронтенда проксирует `/auth/v1`, `/rest/v1`, `/realtime/v1`, `/storage/v1`, `/functions/v1` на этот порт.
 
-**Почему «с сайта» Studio не открывается:** у прод-сайта корень `/` обычно отдаёт **Next.js**. API Supabase идёт на те же пути `/auth`, `/rest`, … — это **Kong**, но **Supabase Studio** при такой схеме **не** висит на публичном `https://ваш-домен/`. Studio — отдельный вход (ниже).
+Ключи `ANON_KEY` / `SERVICE_ROLE_KEY` из `deploy/supabase/.env` → в `apps/web/.env` как `NEXT_PUBLIC_SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY`. `NEXT_PUBLIC_SUPABASE_URL` — публичный HTTPS-URL домена.
 
-#### Как зайти в Supabase Studio (self-hosted)
+#### Supabase Studio
 
-1. Узнайте порт Kong: в `deploy/supabase/.env` переменная **`KONG_HTTP_PORT`** (часто `8000`).
-2. Логин/пароль для Studio задаются **`DASHBOARD_USERNAME`** и **`DASHBOARD_PASSWORD`** в том же `.env` (Basic Auth в Kong для маршрута `/` → Studio).
-3. Откройте Studio одним из способов:
-   - **С сервера по SSH:** `curl -sI -u "ЛОГИН:ПАРОЛЬ" "http://127.0.0.1:8000/"` (подставьте порт из `.env`) — если ответ не `connection refused`, в браузере на сервере: `http://127.0.0.1:8000/`.
-   - **С вашего ПК через туннель:**  
-     `ssh -L 8000:127.0.0.1:8000 user@ваш-сервер`  
-     затем в браузере: `http://127.0.0.1:8000/` и ввести `DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD`.
-   - Если поднят вариант с **`docker-compose.nginx.yml`** и **`PROXY_DOMAIN`**, Studio может быть на **`https://PROXY_DOMAIN/`** с тем же Basic Auth (см. `deploy/supabase/volumes/proxy/nginx/supabase-nginx.conf.tpl`).
+Studio не висит на публичном URL — она за Basic Auth в Kong:
 
-Если порт закрыт **firewall**, откройте его только для своего IP или пользуйтесь **SSH-туннелем** (предпочтительнее).
+1. Порт: `KONG_HTTP_PORT` из `.env`
+2. Логин/пароль: `DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD` из `.env`
+3. Через SSH-туннель: `ssh -L 8000:127.0.0.1:8000 user@сервер` → `http://127.0.0.1:8000/`
 
-#### Сделать единственный аккаунт админом **без Studio**
-
-На сервере:
+#### Первый админ
 
 ```bash
 cd deploy/supabase
@@ -79,58 +196,16 @@ chmod +x scripts/grant-admin-by-email.sh
 ./scripts/grant-admin-by-email.sh 'ваш@email.com'
 ```
 
-Скрипт выполняет `INSERT` в `public.user_roles` и в конце показывает строки ролей для этого email. После этого выйдите из сайта ЖК и войдите снова (или обновите сессию).
-
-#### Админ-панель в веб-приложении
-
-После того как у учётки есть роль **`admin`**, в меню пользователя появится пункт **«Админка»**. Раздел **`/{locale}/admin`** (например `/ru/admin`): обзор, **`/admin/users`** — список пользователей из Auth, выдача/снятие ролей **board** и **admin** по кнопкам или по email. Нужны переменные **`SUPABASE_SERVICE_ROLE_KEY`** и **`NEXT_PUBLIC_SUPABASE_URL`** в окружении Next.js (уже требуются для RAG).
-
-Вручную через `psql` (эквивалент):
-
-```bash
-cd deploy/supabase
-docker compose exec -T db psql -U postgres -d postgres -c \
-  "insert into public.user_roles (user_id, role) select id, 'admin'::app_role from auth.users where email = 'ваш@email.com' on conflict (user_id, role) do nothing;"
-```
-
-### Первый член правления (SQL по UUID)
-
-Если знаете UUID из `auth.users`:
+Или через psql:
 
 ```sql
 insert into public.user_roles (user_id, role)
-values ('<uuid>'::uuid, 'admin')
+select id, 'admin'::app_role from auth.users
+where email = 'ваш@email.com'
 on conflict (user_id, role) do nothing;
 ```
 
-## Структура
-
-- `apps/web` — Next.js App Router, `src/features/*` (в т.ч. `admin`, `board-moderation`, `auth`, …)
-- `deploy/supabase` — production Docker Compose (self-hosted), не коммитьте `.env` и `volumes/db/data`
-- `deploy/supabase/scripts/grant-admin-by-email.sh` — первый `admin` по email
-- `scripts/apply-supabase-migrations.sh` — обёртка для `supabase db push` (удобно с CLI)
-- `supabase/migrations` — схема, RLS (в т.ч. `user_has_staff_role`, `audit_log`), RPC `moderate_profile`, `match_document_chunks`
-- `supabase/functions` — заготовки `ingest` и `rag-chat`
-
-## Сборка
-
-На VPS с ограниченной RAM предпочтительно:
-
-```bash
-cd apps/web
-npm ci
-npm run build:safe
-```
-
-`build:safe` задаёт лимит кучи Node (`NEXT_BUILD_HEAP_MB`, по умолчанию 2048) и отключает телеметрию; в `next.config.ts` включён `webpackMemoryOptimizations`. Обычная сборка: `npm run build`.
-
-Проверка типов без полной сборки: `npm run typecheck`.
-
-PWA (Workbox) подключается через `@ducanh2912/next-pwa` и отключена в `development`.
-
-## Прод: сайт и 502
-
-Nginx проксирует на `127.0.0.1:3000`. Нужны **сборка** и **демон**:
+#### Nginx + Next.js
 
 ```bash
 cd apps/web && npm ci && npm run build
@@ -138,16 +213,88 @@ sudo cp deploy/olive-garden-web.service /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now olive-garden-web
 ```
 
-После деплоя кода: `npm run build:safe` (или `npm run build`) и `sudo systemctl restart olive-garden-web`. Логи: `journalctl -u olive-garden-web -f`.
+Обновление: `npm run build:safe && sudo systemctl restart olive-garden-web`. Логи: `journalctl -u olive-garden-web -f`.
 
-Юнит [`deploy/olive-garden-web.service`](deploy/olive-garden-web.service) задаёт `MemoryMax=900M` на процесс `next start` — при OOM увеличьте лимит или RAM/swap.
+Юнит задаёт `MemoryMax=900M` — при OOM увеличьте лимит или swap.
 
-Если nginx отдаёт **502** и в `/var/log/nginx/error.log` есть **`upstream sent too big header`** на запросах к Next.js — ответ с большими заголовками (часто **Set-Cookie** от Supabase SSR). В `location /` для прокси на `3000` добавьте, например: `proxy_buffer_size 128k;`, `proxy_buffers 4 256k;`, `proxy_busy_buffers_size 256k;`, на уровне `server` при необходимости — `large_client_header_buffers 4 16k;`.
+---
 
-## Память на VPS (6GB и меньше)
+## Переменные окружения
 
-**Не запускайте одновременно** self-hosted `deploy/supabase` и локальный `npx supabase start` — получаются **два полных стека** (два Postgres, два Kong, два Logflare и т.д.) и быстро забивается RAM. Для разработки на машине — только CLI; на сервере продакшена — только `deploy/supabase`. Остановить CLI-стек: `npx supabase stop` из корня репозитория.
+### Обязательные
 
-В [`deploy/supabase/docker-compose.override.yml`](deploy/supabase/docker-compose.override.yml) заданы лимиты памяти для контейнеров; при `docker compose up -d` они подхватываются автоматически.
+| Переменная | Описание |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | URL сайта (https://домен) |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (только сервер) |
 
-Один процесс Next.js на порт 3000; лишние `next-server` завершите. При нехватке памяти увеличьте swap (например 2G) и не держите на проде Cursor/IDE.
+### Опциональные
+
+| Переменная | Описание |
+|---|---|
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Email-уведомления |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push |
+| `OPENAI_API_KEY` | RAG-эмбеддинги и чат |
+
+---
+
+## Сборка
+
+На VPS с ограниченной RAM:
+
+```bash
+cd apps/web && npm ci && npm run build:safe
+```
+
+`build:safe` ограничивает кучу Node (`NEXT_BUILD_HEAP_MB`, по умолчанию 2048) и отключает телеметрию. В `next.config.ts` включён `webpackMemoryOptimizations`. Обычная сборка: `npm run build`.
+
+Проверка типов: `npm run typecheck`.
+
+PWA через `@ducanh2912/next-pwa`, отключена в development.
+
+---
+
+## 502 и заголовки
+
+Если nginx отдаёт **502** и в логе `upstream sent too big header` — в `location /` для прокси на 3000 добавьте:
+
+```nginx
+proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+proxy_busy_buffers_size 256k;
+```
+
+---
+
+## Память на VPS (6 GB и меньше)
+
+Не запускайте одновременно `deploy/supabase` и `npx supabase start` — получите два стека и забьёте RAM. Для разработки — CLI, для продакшена — `deploy/supabase`.
+
+В [`deploy/supabase/docker-compose.override.yml`](deploy/supabase/docker-compose.override.yml) заданы лимиты памяти для каждого контейнера. Все сервисы в общей Docker-сети `olivegarden`.
+
+---
+
+## Документация
+
+- [docs/TZ.md](docs/TZ.md) — техническое задание, модули
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — архитектура, RLS, ADR
+
+---
+
+## Стек
+
+| Слой | Технология |
+|---|---|
+| Фреймворк | Next.js 15 (App Router, Turbopack) |
+| UI | React 19, Tailwind CSS 4, shadcn/ui, Radix, Lucide |
+| База данных | Supabase (Postgres, RLS, Realtime, Storage, Edge Functions) |
+| Валидация | Zod |
+| i18n | next-intl (tr, ru, en) |
+| Анимации | motion |
+| PWA | @ducanh2912/next-pwa |
+| Email | Nodemailer |
+| Push | web-push (VAPID) |
+| RAG | OpenAI text-embedding-3-small + pgvector |
+| Деплой | Docker Compose, Nginx, systemd |
