@@ -11,7 +11,10 @@ import {
   AnnouncementEditor,
   BoardMemberEditor,
 } from "@/features/content/board-content-forms";
+import { MeetingEditor } from "@/features/meetings/meeting-editor";
+import { CandidateEditor } from "@/features/elections/candidate-editor";
 import { DocumentUploadForm } from "@/features/rag/document-upload-form";
+import { ServiceTypeEditor } from "@/features/services/service-type-editor";
 import { PageSkeleton } from "@/components/loading-skeletons";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -56,6 +59,18 @@ export default async function BoardContentPage({ params }: Props) {
     .from("knowledge_documents")
     .select("id, title, created_at")
     .order("created_at", { ascending: false });
+  const { data: serviceTypes } = await supabase
+    .from("service_types")
+    .select("*")
+    .order("sort_order");
+  const { data: meetings } = await supabase
+    .from("meetings")
+    .select("*, decisions(*)")
+    .order("scheduled_at", { ascending: false });
+  const { data: candidates } = await supabase
+    .from("election_candidates")
+    .select("*")
+    .order("sort_order");
 
   return (
     <Suspense fallback={<PageSkeleton />}>
@@ -130,6 +145,18 @@ export default async function BoardContentPage({ params }: Props) {
             ))}
             <BoardMemberEditor />
           </div>
+        </section>
+
+        <section>
+          <ServiceTypeEditor types={serviceTypes ?? []} />
+        </section>
+
+        <section>
+          <MeetingEditor meetings={meetings ?? []} locale={locale} />
+        </section>
+
+        <section>
+          <CandidateEditor candidates={candidates ?? []} locale={locale} />
         </section>
 
         <section>

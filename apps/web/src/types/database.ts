@@ -80,7 +80,13 @@ export type Suggestion = {
   updated_at: string;
 };
 
-export type NotificationType = "announcement_new" | "request_status_changed" | "suggestion_status_changed";
+export type NotificationType =
+  | "announcement_new"
+  | "request_status_changed"
+  | "suggestion_status_changed"
+  | "meeting_scheduled"
+  | "decision_published"
+  | "guest_pass_status_changed";
 
 export type Notification = {
   id: string;
@@ -91,5 +97,87 @@ export type Notification = {
   read: boolean;
   entity_type: string | null;
   entity_id: string | null;
+  created_at: string;
+};
+
+export type MeetingStatus = "scheduled" | "completed" | "cancelled";
+export type MeetingType = "regular" | "extraordinary" | "annual";
+
+export type Meeting = {
+  id: string;
+  title: string;
+  description: string | null;
+  meeting_type: MeetingType;
+  scheduled_at: string;
+  location: string | null;
+  agenda: string | null;
+  minutes: string | null;
+  status: MeetingStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Decision = {
+  id: string;
+  meeting_id: string | null;
+  title: string;
+  description: string | null;
+  decided_at: string;
+  created_at: string;
+};
+
+export type ElectionCandidate = {
+  id: string;
+  full_name: string;
+  program: string | null;
+  photo_path: string | null;
+  election_year: number;
+  sort_order: number;
+  created_at: string;
+};
+
+export type Vehicle = {
+  id: string;
+  user_id: string;
+  plate_number: string;
+  vehicle_description: string | null;
+  is_temporary: boolean;
+  valid_from: string | null;
+  valid_until: string | null;
+  status: "active" | "expired" | "removed";
+  created_at: string;
+};
+
+export type GuestPass = {
+  id: string;
+  user_id: string;
+  guest_name: string;
+  pass_type: "car" | "pedestrian";
+  plate_number: string | null;
+  valid_from: string;
+  valid_until: string;
+  status: "pending" | "active" | "used" | "cancelled";
+  notes: string | null;
+  created_at: string;
+};
+
+export type KeyFob = {
+  id: string;
+  user_id: string;
+  key_type: "entrance" | "parking" | "storage" | "mail" | "other";
+  identifier: string;
+  issued_at: string;
+  status: "issued" | "returned" | "lost";
+  notes: string | null;
+  created_at: string;
+};
+
+export type PushSubscription = {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth_key: string;
   created_at: string;
 };

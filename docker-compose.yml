@@ -10,6 +10,8 @@ services:
       resources:
         limits:
           memory: 900M
+    networks:
+      - olivegarden
     restart: unless-stopped
 
   nginx:
@@ -22,4 +24,10 @@ services:
       - ./deploy/nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       - web
+    networks:
+      - olivegarden
     restart: unless-stopped
+
+networks:
+  olivegarden:
+    external: true

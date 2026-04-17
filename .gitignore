@@ -15,3 +15,7 @@ apps/web/public/sw.js.map
 apps/web/public/workbox-*.js
 apps/web/public/worker-*.js
 apps/web/public/fallback-*.js
+FEATURES.pdf
+FEATURES_extracted.json
+deploy/supabase/.env
+deploy/nginx/ssl/*.pem

@@ -1,7 +1,6 @@
-# Ограничения RAM для VPS ~6GB. Подключается автоматически: docker compose up -d
-# https://docs.docker.com/compose/how-tos/resource-constraints/
 services:
   analytics:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
@@ -9,42 +8,62 @@ services:
         reservations:
           memory: 128M
   studio:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 384M
   kong:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 384M
   db:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 768M
   supavisor:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 256M
   realtime:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 256M
   meta:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 256M
   storage:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 256M
   functions:
+    networks: [olivegarden]
     deploy:
       resources:
         limits:
           memory: 256M
+  auth:
+    networks: [olivegarden]
+  rest:
+    networks: [olivegarden]
+  imgproxy:
+    networks: [olivegarden]
+  vector:
+    networks: [olivegarden]
+
+networks:
+  olivegarden:
+    external: true

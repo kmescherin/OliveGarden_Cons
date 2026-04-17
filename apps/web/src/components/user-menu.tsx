@@ -19,6 +19,7 @@ import {
   Shield,
   ClipboardList,
   FileText,
+  Car,
   LogOut,
 } from "lucide-react";
 
@@ -86,6 +87,10 @@ export function UserMenu({
             <DropdownMenuItem onClick={() => router.push("/board/suggestions")}>
               <ClipboardList className="mr-2 h-4 w-4" />
               {t("boardSuggestions")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/board/parking")}>
+              <Car className="mr-2 h-4 w-4" />
+              {t("parking")}
             </DropdownMenuItem>
           </>
         ) : null}
