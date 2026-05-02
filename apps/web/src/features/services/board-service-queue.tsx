@@ -1,3 +1,4 @@
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
@@ -10,37 +11,59 @@ import {
 } from "@/components/ui/card";
 import { updateServiceRequestStatus } from "@/features/services/service-request-actions";
 import { EmptyState } from "@/components/empty-state";
+import { localizeServiceTypeName } from "./service-type-i18n";
 
 const statusOrder = { new: 0, in_progress: 1, done: 2, cancelled: 3 } as const;
 
-const statusLabels: Record<string, string> = {
-  new: "New",
-  in_progress: "In Progress",
-  done: "Done",
-  cancelled: "Cancelled",
+const statusLabelKey: Record<string, string> = {
+  new: "statusNew",
+  in_progress: "statusInProgress",
+  done: "statusDone",
+  cancelled: "statusCancelled",
 };
 
-async function setStatus(formData: FormData) {
-  "use server";
-  const id = formData.get("id") as string;
-  const status = formData.get("status") as "new" | "in_progress" | "done" | "cancelled";
-  await updateServiceRequestStatus("tr", id, status);
-}
+type ServiceStatus = keyof typeof statusOrder;
+type ServiceProfile = {
+  full_name: string | null;
+  block: string | null;
+  apartment: string | null;
+};
 
 export async function BoardServiceQueue() {
   const supabase = await createClient();
+  const locale = await getLocale();
+  const t = await getTranslations("Services");
+  const messages = await getMessages();
+
+  async function setStatus(formData: FormData) {
+    "use server";
+    const id = formData.get("id") as string;
+    const status = formData.get("status") as
+      | "new"
+      | "in_progress"
+      | "done"
+      | "cancelled";
+    await updateServiceRequestStatus(locale, id, status);
+  }
+
   const { data: rows } = await supabase
     .from("service_requests")
-    .select("*, service_types(name), profiles(full_name, block, apartment)")
+    .select("*, service_types(key, name), profiles(full_name, block, apartment)")
     .order("created_at", { ascending: false });
 
   if (!rows?.length) {
-    return <EmptyState title="No pending requests" description="All service requests have been handled" />;
+    return (
+      <EmptyState
+        title={t("noPending")}
+        description={t("noPendingDesc")}
+      />
+    );
   }
 
   const sorted = [...rows].sort(
     (a, b) =>
-      (statusOrder as any)[a.status] - (statusOrder as any)[b.status] ||
+      (statusOrder[a.status as ServiceStatus] ?? Number.MAX_SAFE_INTEGER) -
+        (statusOrder[b.status as ServiceStatus] ?? Number.MAX_SAFE_INTEGER) ||
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
@@ -64,13 +87,18 @@ export async function BoardServiceQueue() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
                 <CardTitle className="text-base">
-                  {(r.service_types as { name: string } | null)?.name ?? "—"}
+                  {localizeServiceTypeName(
+                    r.service_types as { key: string; name: string } | null,
+                    messages,
+                  )}
                 </CardTitle>
-                <Badge variant="secondary">{statusLabels[r.status] ?? r.status}</Badge>
+                <Badge variant="secondary">
+                  {statusLabelKey[r.status] ? t(statusLabelKey[r.status]) : r.status}
+                </Badge>
               </div>
               <CardDescription>
-                {(r.profiles as { full_name: string | null; block: string | null; apartment: string | null } | null)
-                  ? `${(r.profiles as any).full_name ?? "—"} · ${(r.profiles as any).block ?? "—"} / ${(r.profiles as any).apartment ?? "—"}`
+                {(r.profiles as ServiceProfile | null)
+                  ? `${(r.profiles as ServiceProfile).full_name ?? "—"} · ${(r.profiles as ServiceProfile).block ?? "—"} / ${(r.profiles as ServiceProfile).apartment ?? "—"}`
                   : "—"}
                 {" · "}
                 {new Date(r.created_at).toLocaleString()}
@@ -92,7 +120,7 @@ export async function BoardServiceQueue() {
               )}
               {r.preferred_at && (
                 <p className="text-xs text-muted-foreground">
-                  Preferred: {new Date(r.preferred_at).toLocaleString()}
+                  {t("preferred")}: {new Date(r.preferred_at).toLocaleString()}
                 </p>
               )}
               <form action={setStatus} className="flex flex-wrap gap-2">
@@ -105,7 +133,7 @@ export async function BoardServiceQueue() {
                     value={s}
                     className="text-xs rounded-md border px-3 py-1.5 hover:bg-muted"
                   >
-                    → {statusLabels[s]}
+                    → {t(statusLabelKey[s])}
                   </button>
                 ))}
               </form>

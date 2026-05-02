@@ -74,6 +74,10 @@
     "email": "Email",
     "password": "Password",
     "fullName": "Full name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
     "phone": "Phone",
     "block": "Block",
     "apartment": "Apartment",
@@ -126,11 +130,35 @@
     "title": "Service requests",
     "new": "New request",
     "type": "Type",
+    "typePlaceholder": "Select request type",
+    "selectTypeError": "Select a type",
+    "submitted": "Request submitted",
+    "submitError": "Could not create request",
+    "noRequests": "No requests yet",
+    "noRequestsDesc": "Your service requests will appear here",
+    "noPending": "No pending requests",
+    "noPendingDesc": "All service requests have been handled",
+    "preferred": "Preferred",
     "description": "Description",
     "preferredTime": "Preferred time (optional)",
     "submit": "Submit",
     "myRequests": "My requests",
-    "status": "Status"
+    "status": "Status",
+    "statusNew": "New",
+    "statusInProgress": "In Progress",
+    "statusDone": "Done",
+    "statusCancelled": "Cancelled",
+    "types": {
+      "water": "Water delivery",
+      "water_on": "Turn on water",
+      "water_off": "Turn off water",
+      "appliance_repair": "Appliance repair",
+      "elevator_broken": "Elevator broken",
+      "cleaning": "Cleaning",
+      "other": "Other",
+      "plumbing": "Plumbing",
+      "electrical": "Electrical"
+    }
   },
   "Chat": {
     "title": "AI assistant",
@@ -160,7 +188,8 @@
     "auditWho": "Moderator",
     "auditResident": "Applicant",
     "auditDecision": "Decision",
-    "auditComment": "Comment"
+    "auditComment": "Comment",
+    "serviceQueueTitle": "Service request queue"
   },
   "Admin": {
     "title": "Admin",
@@ -170,6 +199,9 @@
     "navUsers": "Users & roles",
     "navModeration": "Registration approvals",
     "navContent": "Content",
+    "navServices": "Service queue",
+    "navSuggestions": "Suggestions",
+    "navParking": "Parking",
     "usersTitle": "Users & roles",
     "cardUsersTitle": "Users & roles",
     "cardUsersDesc": "Grant or revoke board and admin roles.",
@@ -211,7 +243,12 @@
     "uploadDocument": "Upload Document",
     "documents": "Documents",
     "delete": "Delete",
-    "noDocuments": "No documents uploaded yet"
+    "noDocuments": "No documents uploaded yet",
+    "sectionRules": "Rules",
+    "sectionZones": "Social zones",
+    "sectionAnnouncements": "Announcements",
+    "sectionBoardMembers": "Board members",
+    "rulesDefaultTitle": "Rules"
   },
   "Suggestions": {
     "title": "Suggestions for the board",

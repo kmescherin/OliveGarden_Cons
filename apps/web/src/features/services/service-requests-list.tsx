@@ -1,3 +1,4 @@
+import { getMessages, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { localizeServiceTypeName } from "./service-type-i18n";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   new: "default",
@@ -17,15 +19,17 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
   cancelled: "destructive",
 };
 
-const statusLabels: Record<string, string> = {
-  new: "New",
-  in_progress: "In Progress",
-  done: "Done",
-  cancelled: "Cancelled",
+const statusLabelKey: Record<string, string> = {
+  new: "statusNew",
+  in_progress: "statusInProgress",
+  done: "statusDone",
+  cancelled: "statusCancelled",
 };
 
 export async function ServiceRequestsList() {
   const supabase = await createClient();
+  const t = await getTranslations("Services");
+  const messages = await getMessages();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,13 +37,13 @@ export async function ServiceRequestsList() {
 
   const { data: rows } = await supabase
     .from("service_requests")
-    .select("*, service_types(name)")
+    .select("*, service_types(key, name)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (!rows?.length) {
     return (
-      <EmptyState title="No requests yet" description="Your service requests will appear here" />
+      <EmptyState title={t("noRequests")} description={t("noRequestsDesc")} />
     );
   }
 
@@ -62,10 +66,13 @@ export async function ServiceRequestsList() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between gap-2">
               <CardTitle className="text-base">
-                {(r.service_types as { name: string } | null)?.name ?? "—"}
+                {localizeServiceTypeName(
+                  r.service_types as { key: string; name: string } | null,
+                  messages,
+                )}
               </CardTitle>
               <Badge variant={statusVariant[r.status] ?? "secondary"}>
-                {statusLabels[r.status] ?? r.status}
+                {statusLabelKey[r.status] ? t(statusLabelKey[r.status]) : r.status}
               </Badge>
             </div>
             <CardDescription>

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getProfile, isBoardMember } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/site-header";
+import { AdminNav } from "@/components/admin-nav";
 import { VehicleForm } from "@/features/parking/vehicle-form";
 import { GuestPassForm } from "@/features/parking/guest-pass-form";
 import { BoardKeyFobManager } from "@/features/parking/board-key-fob-manager";
@@ -57,6 +58,7 @@ export default async function BoardParkingPage({ params }: Props) {
     <Suspense fallback={<PageSkeleton />}>
       <div className="flex min-h-screen flex-col">
         <SiteHeader user={user} />
+        <AdminNav />
         <main className="container flex-1 space-y-10 py-10">
           <h1 className="text-3xl font-semibold">{t("boardTitle")}</h1>
           <div className="space-y-4">

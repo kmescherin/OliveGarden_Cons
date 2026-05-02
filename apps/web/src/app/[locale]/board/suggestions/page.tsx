@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, isBoardMember } from "@/lib/profile";
 import { SiteHeader } from "@/components/site-header";
+import { AdminNav } from "@/components/admin-nav";
 import { updateSuggestionStatus } from "@/features/suggestions/suggestion-actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,6 +43,7 @@ export default async function BoardSuggestionsPage({ params }: Props) {
     <Suspense fallback={<PageSkeleton />}>
       <div className="flex min-h-screen flex-col">
         <SiteHeader user={user} />
+        <AdminNav />
       <main className="container flex-1 space-y-8 py-10">
         <h1 className="text-3xl font-semibold">{t("boardTitle")}</h1>
         {!suggestions?.length && (

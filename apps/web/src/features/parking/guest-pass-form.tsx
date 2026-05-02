@@ -33,6 +33,10 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
   cancelled: "destructive",
 };
 
+function statusLabelKey(status: string) {
+  return `status${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+}
+
 export function GuestPassForm({
   passes,
   locale,
@@ -108,7 +112,15 @@ export function GuestPassForm({
           <Label>{t("passType")}</Label>
           <Select value={passType} onValueChange={(v) => { if (v) setPassType(v); }}>
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue>
+                {(value: string | null) =>
+                  value === "car"
+                    ? t("typeCar")
+                    : value === "pedestrian"
+                      ? t("typePedestrian")
+                      : ""
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="car">{t("typeCar")}</SelectItem>
@@ -174,7 +186,7 @@ export function GuestPassForm({
                     <CardTitle className="text-base">{p.guest_name}</CardTitle>
                   </div>
                   <Badge variant={statusVariant[p.status] ?? "secondary"}>
-                    {t(`status${p.status.charAt(0).toUpperCase() + p.status.slice(1)}` as any)}
+                    {t(statusLabelKey(p.status))}
                   </Badge>
                 </div>
               </CardHeader>
