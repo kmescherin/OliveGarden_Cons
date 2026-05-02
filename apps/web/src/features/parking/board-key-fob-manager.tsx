@@ -42,6 +42,10 @@ const typeKey: Record<string, string> = {
 
 const keyTypes = ["entrance", "parking", "storage", "mail", "other"] as const;
 
+function statusLabelKey(status: string) {
+  return `status${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+}
+
 export function BoardKeyFobManager({
   keys,
   profiles,
@@ -58,6 +62,9 @@ export function BoardKeyFobManager({
   const [identifier, setIdentifier] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const profileNameById = (id: string) =>
+    profiles.find((p) => p.id === id)?.full_name ?? "—";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,7 +112,11 @@ export function BoardKeyFobManager({
           <Label>{t("issuedTo")}</Label>
           <Select value={userId} onValueChange={(v) => { if (v) setUserId(v); }}>
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder="—">
+                {(value: string | null) =>
+                  value ? profileNameById(value) : "—"
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {profiles.map((p) => (
@@ -120,7 +131,11 @@ export function BoardKeyFobManager({
           <Label>{t("keyType")}</Label>
           <Select value={keyType} onValueChange={(v) => { if (v) setKeyType(v); }}>
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue>
+                {(value: string | null) =>
+                  value ? t(typeKey[value] ?? "typeOther") : ""
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {keyTypes.map((kt) => (
@@ -164,7 +179,7 @@ export function BoardKeyFobManager({
                     <CardTitle className="text-base">{k.identifier}</CardTitle>
                   </div>
                   <Badge variant={statusVariant[k.status] ?? "secondary"}>
-                    {t(`status${k.status.charAt(0).toUpperCase() + k.status.slice(1)}` as any)}
+                    {t(statusLabelKey(k.status))}
                   </Badge>
                 </div>
               </CardHeader>

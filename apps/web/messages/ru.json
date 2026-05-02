@@ -74,6 +74,10 @@
     "email": "Email",
     "password": "Пароль",
     "fullName": "ФИО",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "firstNameRequired": "Укажите имя",
+    "lastNameRequired": "Укажите фамилию",
     "phone": "Телефон",
     "block": "Блок",
     "apartment": "Квартира",
@@ -126,11 +130,35 @@
     "title": "Заявки на сервисы",
     "new": "Новая заявка",
     "type": "Тип",
+    "typePlaceholder": "Выберите тип заявки",
+    "selectTypeError": "Выберите тип",
+    "submitted": "Заявка отправлена",
+    "submitError": "Не удалось создать заявку",
+    "noRequests": "Пока нет заявок",
+    "noRequestsDesc": "Здесь появятся ваши заявки",
+    "noPending": "Нет ожидающих заявок",
+    "noPendingDesc": "Все заявки обработаны",
+    "preferred": "Удобное время",
     "description": "Описание",
     "preferredTime": "Удобное время (необязательно)",
     "submit": "Отправить",
     "myRequests": "Мои заявки",
-    "status": "Статус"
+    "status": "Статус",
+    "statusNew": "Новая",
+    "statusInProgress": "В работе",
+    "statusDone": "Выполнено",
+    "statusCancelled": "Отменено",
+    "types": {
+      "water": "Подача воды",
+      "water_on": "Включить воду",
+      "water_off": "Отключить воду",
+      "appliance_repair": "Ремонт техники",
+      "elevator_broken": "Поломка лифта",
+      "cleaning": "Уборка",
+      "other": "Другое",
+      "plumbing": "Сантехника",
+      "electrical": "Электрика"
+    }
   },
   "Chat": {
     "title": "ИИ-ассистент",
@@ -160,7 +188,8 @@
     "auditWho": "Кто",
     "auditResident": "Заявитель",
     "auditDecision": "Решение",
-    "auditComment": "Комментарий"
+    "auditComment": "Комментарий",
+    "serviceQueueTitle": "Очередь заявок"
   },
   "Admin": {
     "title": "Админ-панель",
@@ -170,6 +199,9 @@
     "navUsers": "Пользователи и роли",
     "navModeration": "Заявки на доступ",
     "navContent": "Контент",
+    "navServices": "Очередь заявок",
+    "navSuggestions": "Предложения",
+    "navParking": "Парковка",
     "usersTitle": "Пользователи и роли",
     "cardUsersTitle": "Пользователи и роли",
     "cardUsersDesc": "Выдать или снять роли правления и администратора.",
@@ -211,7 +243,12 @@
     "uploadDocument": "Загрузить документ",
     "documents": "Документы",
     "delete": "Удалить",
-    "noDocuments": "Документы не загружены"
+    "noDocuments": "Документы не загружены",
+    "sectionRules": "Правила",
+    "sectionZones": "Социальные зоны",
+    "sectionAnnouncements": "Объявления",
+    "sectionBoardMembers": "Члены правления",
+    "rulesDefaultTitle": "Правила"
   },
   "Suggestions": {
     "title": "Предложения правлению",

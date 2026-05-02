@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, isBoardMember } from "@/lib/profile";
 import { SiteHeader } from "@/components/site-header";
+import { AdminNav } from "@/components/admin-nav";
 import {
   ContentPageEditor,
   SocialZoneEditor,
@@ -23,6 +24,7 @@ export default async function BoardContentPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Board");
+  const tc = await getTranslations("Content");
   const { user } = await getProfile();
   const board = await isBoardMember();
 
@@ -76,15 +78,16 @@ export default async function BoardContentPage({ params }: Props) {
     <Suspense fallback={<PageSkeleton />}>
       <div className="flex min-h-screen flex-col">
         <SiteHeader user={user} />
+        <AdminNav />
       <main className="container flex-1 space-y-10 py-10">
         <h1 className="text-3xl font-semibold">{t("contentTitle")}</h1>
 
         <section>
-          <h2 className="mb-4 text-xl font-medium">Rules</h2>
+          <h2 className="mb-4 text-xl font-medium">{tc("sectionRules")}</h2>
           <ContentPageEditor
             slug="rules"
             initial={{
-              title: rules?.title ?? "Rules",
+              title: rules?.title ?? tc("rulesDefaultTitle"),
               body: rules?.body ?? "",
               visibility: (rules?.visibility as "public" | "residents") ?? "public",
             }}
@@ -92,7 +95,7 @@ export default async function BoardContentPage({ params }: Props) {
         </section>
 
         <section>
-          <h2 className="mb-4 text-xl font-medium">Social zones</h2>
+          <h2 className="mb-4 text-xl font-medium">{tc("sectionZones")}</h2>
           <div className="space-y-6">
             {(zones ?? []).map((z) => (
               <SocialZoneEditor key={z.id} zone={z} />
@@ -110,7 +113,7 @@ export default async function BoardContentPage({ params }: Props) {
         </section>
 
         <section>
-          <h2 className="mb-4 text-xl font-medium">Announcements</h2>
+          <h2 className="mb-4 text-xl font-medium">{tc("sectionAnnouncements")}</h2>
           <div className="space-y-6">
             {(announcements ?? []).map((a) => (
               <AnnouncementEditor
@@ -128,7 +131,7 @@ export default async function BoardContentPage({ params }: Props) {
         </section>
 
         <section>
-          <h2 className="mb-4 text-xl font-medium">Board members</h2>
+          <h2 className="mb-4 text-xl font-medium">{tc("sectionBoardMembers")}</h2>
           <div className="space-y-6">
             {(boardMembers ?? []).map((m) => (
               <BoardMemberEditor

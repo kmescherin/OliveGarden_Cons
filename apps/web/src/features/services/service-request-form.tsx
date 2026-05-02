@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ServiceType } from "@/types/database";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { PhotoUpload } from "./photo-upload";
+import { localizeServiceTypeName } from "./service-type-i18n";
 
 export function ServiceRequestForm({
   serviceTypes,
@@ -25,6 +26,7 @@ export function ServiceRequestForm({
   serviceTypes: ServiceType[];
 }) {
   const t = useTranslations("Services");
+  const messages = useMessages();
   const router = useRouter();
   const [typeId, setTypeId] = useState<string>("");
   const [description, setDescription] = useState("");
@@ -32,10 +34,15 @@ export function ServiceRequestForm({
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
 
+  const typeNameById = (id: string) => {
+    const type = serviceTypes.find((st) => st.id === id);
+    return localizeServiceTypeName(type, messages);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!typeId) {
-      toast.error("Select type");
+      toast.error(t("selectTypeError"));
       return;
     }
     setLoading(true);
@@ -59,7 +66,7 @@ export function ServiceRequestForm({
       .single();
     if (error || !inserted) {
       setLoading(false);
-      toast.error(error?.message ?? "Insert failed");
+      toast.error(error?.message ?? t("submitError"));
       return;
     }
     const photoPaths: string[] = [];
@@ -78,7 +85,8 @@ export function ServiceRequestForm({
         .eq("id", inserted.id);
     }
     setLoading(false);
-    toast.success("OK");
+    toast.success(t("submitted"));
+    setTypeId("");
     setDescription("");
     setPreferredAt("");
     setPhotos([]);
@@ -98,12 +106,14 @@ export function ServiceRequestForm({
           onValueChange={(v) => setTypeId(v ?? "")}
         >
           <SelectTrigger>
-            <SelectValue placeholder="—" />
+            <SelectValue placeholder={t("typePlaceholder")}>
+              {(value: string | null) => (value ? typeNameById(value) : t("typePlaceholder"))}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {serviceTypes.map((st) => (
               <SelectItem key={st.id} value={st.id}>
-                {st.name}
+                {localizeServiceTypeName(st, messages)}
               </SelectItem>
             ))}
           </SelectContent>

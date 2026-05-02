@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isBoardMember } from "@/lib/profile";
 import { SiteHeader } from "@/components/site-header";
+import { AdminNav } from "@/components/admin-nav";
 import { getProfile } from "@/lib/profile";
 import { ModerationAuditSection } from "@/features/board-moderation/moderation-audit-section";
 import { PendingProfilesTable } from "@/features/board-moderation/pending-profiles-table";
@@ -45,6 +46,7 @@ export default async function BoardModerationPage({ params }: Props) {
     <Suspense fallback={<PageSkeleton />}>
       <div className="flex min-h-screen flex-col">
         <SiteHeader user={user} />
+        <AdminNav />
         <main className="container flex-1 py-10">
           <h1 className="mb-6 text-3xl font-semibold">{t("moderationTitle")}</h1>
           <PendingProfilesTable rows={(pending ?? []) as Profile[]} />

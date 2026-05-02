@@ -17,7 +17,8 @@ export function RegisterForm() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    fullName: "",
+    firstName: "",
+    lastName: "",
     phone: "",
     block: "",
     apartment: "",
@@ -25,6 +26,16 @@ export function RegisterForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const firstName = form.firstName.trim();
+    const lastName = form.lastName.trim();
+    if (!firstName) {
+      toast.error(t("firstNameRequired"));
+      return;
+    }
+    if (!lastName) {
+      toast.error(t("lastNameRequired"));
+      return;
+    }
     setLoading(true);
     if (form.password.length < 8) {
       toast.error(t("passwordTooShort"));
@@ -39,13 +50,16 @@ export function RegisterForm() {
     const supabase = createClient();
     const origin =
       typeof window !== "undefined" ? window.location.origin : "";
+    const fullName = `${firstName} ${lastName}`;
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
         emailRedirectTo: `${origin}/${locale}/auth/callback`,
         data: {
-          full_name: form.fullName,
+          full_name: fullName,
+          first_name: firstName,
+          last_name: lastName,
           phone: form.phone,
           block: form.block,
           apartment: form.apartment,
@@ -68,14 +82,25 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
-      <div className="grid gap-2">
-        <Label htmlFor="fullName">{t("fullName")}</Label>
-        <Input
-          id="fullName"
-          required
-          value={form.fullName}
-          onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="firstName">{t("firstName")}</Label>
+          <Input
+            id="firstName"
+            required
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="lastName">{t("lastName")}</Label>
+          <Input
+            id="lastName"
+            required
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          />
+        </div>
       </div>
       <div className="grid gap-2">
         <Label htmlFor="phone">{t("phone")}</Label>
@@ -122,7 +147,7 @@ export function RegisterForm() {
           type="password"
           autoComplete="new-password"
           required
-          minLength={6}
+          minLength={8}
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
