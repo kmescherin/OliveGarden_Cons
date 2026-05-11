@@ -29,7 +29,7 @@ export default async function AnnouncementsPage({ params }: Props) {
       <div className="space-y-10">
       <h1 className="public-heading">{t("announcements")}</h1>
       {(items ?? []).length === 0 ? (
-        <p className="text-sm text-muted-foreground">No announcements yet.</p>
+        <p className="text-sm text-muted-foreground">{t("noAnnouncements")}</p>
       ) : (
         <ul className="space-y-4">
           {(items ?? []).map((a) => (
