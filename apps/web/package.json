@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit -p .",
     "test:error-management": "node --test scripts/error-management.test.mjs",
     "audit:error-surfaces": "node scripts/audit-error-surfaces.mjs",
+    "audit:user-paths": "node scripts/audit-user-paths.mjs",
     "doctor:auth": "node scripts/doctor-auth.mjs",
     "start": "next start",
     "lint": "eslint"
