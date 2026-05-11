@@ -69,9 +69,9 @@ export default async function MeetingsInfoPage({ params }: Props) {
                 <li key={m.id}>
                   <Card className="public-panel">
                     <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <CardTitle className="text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
-                        <div className="flex gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <CardTitle className="min-w-0 break-words text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
                           <Badge variant="outline">
                             {typeLabel(m.meeting_type)}
                           </Badge>
@@ -110,9 +110,9 @@ export default async function MeetingsInfoPage({ params }: Props) {
                 <li key={m.id}>
                   <Card className="public-panel">
                     <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <CardTitle className="text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
-                        <div className="flex gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <CardTitle className="min-w-0 break-words text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
                           <Badge variant="outline">
                             {typeLabel(m.meeting_type)}
                           </Badge>
@@ -140,7 +140,7 @@ export default async function MeetingsInfoPage({ params }: Props) {
                           </p>
                           <ul className="mt-1 space-y-1">
                             {m.decisions.map((d) => (
-                              <li key={d.id} className="border border-border bg-muted/40 p-3">
+                              <li key={d.id} className="break-words border border-border bg-muted/40 p-3">
                                 <p className="font-medium text-foreground">
                                   {d.title}
                                 </p>
