@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 export function ContentPageEditor({
   slug,
@@ -32,7 +33,7 @@ export function ContentPageEditor({
     const res = await upsertContentPage({ slug, title, body, visibility });
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Saved");
@@ -105,7 +106,7 @@ export function SocialZoneEditor({
     });
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Saved");
@@ -170,7 +171,7 @@ export function AnnouncementEditor({
     });
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Saved");
@@ -182,7 +183,7 @@ export function AnnouncementEditor({
     const res = await deleteAnnouncement(announcement.id);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Deleted");
@@ -264,7 +265,7 @@ export function BoardMemberEditor({
     });
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Saved");
@@ -276,7 +277,7 @@ export function BoardMemberEditor({
     const res = await deleteBoardMember(member.id);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success("Deleted");
