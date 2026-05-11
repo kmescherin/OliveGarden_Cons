@@ -29,25 +29,23 @@ export function SiteHeaderClient({
 }) {
   const t = useTranslations("Nav");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navLinkClass = cn(
+    buttonVariants({ variant: "ghost", size: "sm" }),
+    "h-9 justify-start px-4 font-sans text-sm leading-none text-muted-foreground hover:text-foreground md:justify-center",
+  );
 
   const navLinks = (
     <>
       <Link
         href="/about"
-        className={cn(
-          buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
-        )}
+        className={navLinkClass}
         onClick={() => setMobileOpen(false)}
       >
         {t("about")}
       </Link>
       <Link
         href="/contacts"
-        className={cn(
-          buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
-        )}
+        className={navLinkClass}
         onClick={() => setMobileOpen(false)}
       >
         {t("contacts")}
@@ -59,10 +57,7 @@ export function SiteHeaderClient({
     <>
       <Link
         href="/dashboard"
-        className={cn(
-          buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
-        )}
+        className={navLinkClass}
         onClick={() => setMobileOpen(false)}
       >
         {t("dashboard")}
@@ -88,7 +83,8 @@ export function SiteHeaderClient({
         <div className="flex min-w-0 items-center gap-2">
           <Link
             href="/"
-            className="font-heading shrink-0 text-xl font-semibold tracking-[0.02em] text-foreground"
+            className={cn(navLinkClass, "shrink-0 text-foreground")}
+            onClick={() => setMobileOpen(false)}
           >
             {t("home")}
           </Link>
@@ -124,10 +120,7 @@ export function SiteHeaderClient({
               >
                 <Link
                   href="/"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "sm" }),
-                    "justify-start",
-                  )}
+                  className={cn(navLinkClass, "text-foreground")}
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("home")}
