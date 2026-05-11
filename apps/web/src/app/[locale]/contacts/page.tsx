@@ -26,53 +26,47 @@ export default async function ContactsPage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
-      <main className="container flex-1 py-10">
-        <div className="mx-auto max-w-2xl space-y-8">
-          <div>
-            <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
-              {t("title")}
-            </h1>
-            <p className="mt-2 text-muted-foreground">{t("lead")}</p>
-          </div>
-          <Card>
+      <main className="public-shell flex-1 py-16 md:py-24">
+        <div className="max-w-4xl">
+          <p className="public-kicker mb-4">{t("title")}</p>
+          <h1 className="public-heading">{t("title")}</h1>
+          <p className="public-lead mt-6">{t("lead")}</p>
+        </div>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          <Card className="public-panel">
             <CardHeader>
               <CardTitle className="text-lg">{t("addressLabel")}</CardTitle>
             </CardHeader>
-            <CardContent className="whitespace-pre-line text-muted-foreground">
+            <CardContent className="whitespace-pre-line leading-7 text-muted-foreground">
               {t("addressValue")}
             </CardContent>
           </Card>
-          <Card>
+          <Card className="public-panel">
             <CardHeader>
               <CardTitle className="text-lg">{t("phoneLabel")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <a
-                href={`tel:${t("phoneHref")}`}
-                className="text-primary underline-offset-4 hover:underline"
-              >
+              <a href={`tel:${t("phoneHref")}`} className="public-link">
                 {t("phoneValue")}
               </a>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="public-panel">
             <CardHeader>
               <CardTitle className="text-lg">{t("emailLabel")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <a
-                href={`mailto:${t("emailValue")}`}
-                className="text-primary underline-offset-4 hover:underline"
-              >
+              <a href={`mailto:${t("emailValue")}`} className="public-link">
                 {t("emailValue")}
               </a>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="public-panel">
             <CardHeader>
               <CardTitle className="text-lg">{t("hoursLabel")}</CardTitle>
             </CardHeader>
-            <CardContent className="whitespace-pre-line text-muted-foreground">
+            <CardContent className="whitespace-pre-line leading-7 text-muted-foreground">
               {t("hoursValue")}
             </CardContent>
           </Card>
