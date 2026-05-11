@@ -24,9 +24,11 @@ export default async function RulesPage({ params }: Props) {
 
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <article className="max-w-3xl space-y-4">
-        <h1 className="text-3xl font-semibold">{page.title ?? t("rules")}</h1>
-        <div className="whitespace-pre-wrap text-muted-foreground">{page.body}</div>
+      <article className="max-w-4xl space-y-8">
+        <h1 className="public-heading">{page.title ?? t("rules")}</h1>
+        <div className="public-panel whitespace-pre-wrap leading-7 text-muted-foreground">
+          {page.body}
+        </div>
       </article>
     </Suspense>
   );

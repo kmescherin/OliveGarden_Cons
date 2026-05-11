@@ -27,18 +27,18 @@ export default async function ElectionsInfoPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton count={3} />}>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-semibold">{t("title")}</h1>
+      <div className="space-y-10">
+        <h1 className="public-heading">{t("title")}</h1>
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("noCandidates")}</p>
         ) : (
           <ul className="space-y-4">
             {items.map((c) => (
               <li key={c.id}>
-                <Card>
+                <Card className="public-panel">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between gap-2">
-                      <CardTitle className="text-base">{c.full_name}</CardTitle>
+                      <CardTitle className="text-xl font-light tracking-[0.01em]">{c.full_name}</CardTitle>
                       <span className="text-sm text-muted-foreground">
                         {c.election_year}
                       </span>
