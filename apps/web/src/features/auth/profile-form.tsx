@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Profile } from "@/types/database";
+import {
+  createErrorReference,
+  logActionError,
+  normalizeAppError,
+} from "@/lib/error-management";
 
 const statusKeys = {
   pending: "statusPending",
@@ -36,33 +41,73 @@ export function ProfileForm({ profile, locale }: Props) {
     e.preventDefault();
     setLoading(true);
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError) {
+        showProfileError(userError);
+        return;
+      }
+      if (!user) {
+        showProfileError(new Error("No authenticated user returned"));
+        return;
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: form.fullName.trim() || null,
+          phone: form.phone.trim() || null,
+          block: form.block.trim() || null,
+          apartment: form.apartment.trim() || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
+      if (error) {
+        showProfileError(error, user.id);
+        return;
+      }
+      toast.success(t("saved"));
+      router.refresh();
+    } catch (error) {
+      showProfileError(error);
+    } finally {
       setLoading(false);
-      toast.error(t("saveError"));
-      return;
     }
+  }
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        full_name: form.fullName.trim() || null,
-        phone: form.phone.trim() || null,
-        block: form.block.trim() || null,
-        apartment: form.apartment.trim() || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
-
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success(t("saved"));
-    router.refresh();
+  function showProfileError(error: unknown, userId?: string) {
+    const referenceId = createErrorReference("profile_save");
+    const normalized = normalizeAppError(error, {
+      fallbackMessage: t("updateError"),
+      referenceId,
+    });
+    logActionError(
+      {
+        action: "profile.update",
+        referenceId,
+        locale,
+        userId,
+        metadata: {
+          block: form.block,
+          apartment: form.apartment,
+        },
+      },
+      error,
+    );
+    const message =
+      normalized.code === "service_unavailable"
+        ? t("serviceUnavailable")
+        : normalized.safeMessage;
+    toast.error(
+      t("errorWithReference", {
+        message,
+        referenceId: normalized.referenceId,
+      }),
+    );
   }
 
   const statusLabel = t(statusKeys[profile.approval_status]);
