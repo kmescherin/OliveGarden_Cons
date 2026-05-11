@@ -39,13 +39,13 @@ export function NotificationsList() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
+    <div className="space-y-6">
+      <div className="dashboard-hero flex items-center justify-between gap-4">
+        <h1 className="dashboard-title">{t("title")}</h1>
         {items.some((n) => !n.read) && (
           <button
             onClick={markAllRead}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="rounded-full border border-border bg-card/45 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/45 hover:text-foreground"
           >
             {t("markAllRead")}
           </button>
@@ -58,8 +58,8 @@ export function NotificationsList() {
         <div
           key={n.id}
           className={cn(
-            "rounded-lg border p-4",
-            !n.read && "bg-primary/5 border-primary/20",
+            "dashboard-panel",
+            !n.read && "border-primary/35 bg-primary/10",
           )}
         >
           <div className="flex items-start justify-between gap-2">

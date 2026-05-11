@@ -2,10 +2,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { getProfile } from "@/lib/profile";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@/components/ui/button-variants";
-import { cn } from "@/lib/utils";
 import { BookOpen, Trees, Megaphone, Users } from "lucide-react";
 import { CardGridSkeleton } from "@/components/loading-skeletons";
 
@@ -43,32 +40,30 @@ export default async function DashboardPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton />}>
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
-          <p className="mt-2 text-muted-foreground">
+      <div className="dashboard-page">
+        <div className="dashboard-hero">
+          <p className="public-kicker">{t("welcome")}</p>
+          <h1 className="dashboard-title">{t("title")}</h1>
+          <p className="dashboard-lead">
             {t("welcome")}
             {profile?.full_name ? `, ${profile.full_name}` : ""}
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="dashboard-card-grid">
           {cards.map((c) => (
-            <Card key={c.href} className="transition-shadow hover:shadow-md">
-              <CardHeader>
-                <div className="mb-2 flex items-center gap-2">
-                  <c.icon className="h-5 w-5 text-muted-foreground" />
-                  <CardTitle className="text-base">{c.title}</CardTitle>
+            <Link key={c.href} href={c.href} className="dashboard-card group block">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <c.icon className="mb-5 size-6 text-primary" />
+                  <h2 className="font-heading text-2xl font-semibold tracking-[0.01em]">
+                    {c.title}
+                  </h2>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href={c.href}
-                  className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                >
-                  {c.title}
-                </Link>
-              </CardContent>
-            </Card>
+                <span className="mt-1 text-xl text-muted-foreground transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

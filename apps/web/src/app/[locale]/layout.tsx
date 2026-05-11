@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
 export const viewport: Viewport = {
-  themeColor: "#1a1a1a",
+  themeColor: "#15221b",
   width: "device-width",
   initialScale: 1,
 };
@@ -45,6 +45,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -66,7 +72,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} min-h-screen antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           {children}

@@ -62,7 +62,7 @@ export function RagChatPanel() {
   }
 
   return (
-    <div className="flex h-[min(70vh,560px)] flex-col rounded-xl border bg-card">
+    <div className="dashboard-panel flex h-[min(70vh,560px)] flex-col p-0">
       <ScrollArea className="flex-1 p-4">
         <ul className="space-y-3">
           {messages.map((m, i) => (
@@ -70,8 +70,8 @@ export function RagChatPanel() {
               key={i}
               className={
                 m.role === "user"
-                  ? "ml-8 rounded-lg bg-muted p-3 text-sm"
-                  : "mr-8 rounded-lg border p-3 text-sm"
+                  ? "ml-8 rounded-lg bg-primary/14 p-3 text-sm"
+                  : "mr-8 rounded-lg border border-border bg-background/24 p-3 text-sm"
               }
             >
               {m.text}
