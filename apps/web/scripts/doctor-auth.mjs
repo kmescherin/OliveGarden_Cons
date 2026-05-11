@@ -5,6 +5,7 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const envPath = new URL("../.env.local", import.meta.url);
+const supabaseConfigPath = new URL("../../../supabase/config.toml", import.meta.url);
 
 function parseEnv(text) {
   const env = {};
@@ -21,6 +22,22 @@ async function readLocalEnv() {
     return parseEnv(await readFile(envPath, "utf8"));
   } catch {
     return {};
+  }
+}
+
+async function readSupabaseRedirects() {
+  try {
+    const text = await readFile(supabaseConfigPath, "utf8");
+    const siteUrl = text.match(/^\s*site_url\s*=\s*"([^"]+)"/m)?.[1];
+    const redirectsBlock = text.match(
+      /^\s*additional_redirect_urls\s*=\s*\[([\s\S]*?)^\s*\]/m,
+    )?.[1];
+    const redirects = redirectsBlock
+      ? [...redirectsBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1])
+      : [];
+    return { siteUrl, redirects };
+  } catch {
+    return { siteUrl: undefined, redirects: [] };
   }
 }
 
@@ -79,6 +96,7 @@ async function main() {
   const anonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const serviceRole = env.SUPABASE_SERVICE_ROLE_KEY;
   const health = await checkUrl(supabaseUrl, anonKey);
+  const supabaseRedirects = await readSupabaseRedirects();
   const dockerAvailable = await commandAvailable("docker", [
     "info",
     "--format",
@@ -100,6 +118,23 @@ async function main() {
     ],
   ];
 
+  const expectedRedirects = [
+    env.NEXT_PUBLIC_SITE_URL ? `${env.NEXT_PUBLIC_SITE_URL}/en/auth/callback` : null,
+    "http://localhost:3011/en/auth/callback",
+  ].filter(Boolean);
+  const missingRedirects = expectedRedirects.filter(
+    (url) =>
+      supabaseRedirects.siteUrl !== url &&
+      !supabaseRedirects.redirects.includes(url),
+  );
+  checks.push([
+    "Supabase auth redirect allow-list",
+    missingRedirects.length === 0,
+    missingRedirects.length === 0
+      ? "callbacks allowed"
+      : `missing ${missingRedirects.join(", ")}`,
+  ]);
+
   if (winHttpProxy != null) {
     checks.push(["Windows WinHTTP proxy", winHttpProxy === "direct", winHttpProxy]);
   }
@@ -109,11 +144,16 @@ async function main() {
     console.log(`${ok ? "OK  " : "FAIL"} ${name}: ${detail}`);
   }
 
-  if (!health.ok) {
+  if (!health.ok || missingRedirects.length > 0) {
     console.log("");
-    console.log("Registration cannot succeed until Supabase auth is reachable.");
+    console.log("Registration cannot complete until Supabase auth is reachable and redirects are allowed.");
     if (supabaseUrl?.includes("127.0.0.1") || supabaseUrl?.includes("localhost")) {
       console.log("Local fix: start Supabase with `npx supabase start` from the repository root.");
+    }
+    if (missingRedirects.length > 0) {
+      console.log(
+        "Local fix: add the missing callback URL(s) to `supabase/config.toml` under `additional_redirect_urls`, then restart Supabase.",
+      );
     }
     if (winHttpProxy && winHttpProxy !== "direct") {
       console.log(
