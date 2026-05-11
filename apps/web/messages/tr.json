@@ -98,7 +98,10 @@
     "loginError": "Giriş yapılamadı. E-posta ve şifrenizi kontrol edin.",
     "magicLinkError": "E-posta bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
     "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin.",
-    "errorWithReference": "{message} Referans: {referenceId}"
+    "errorWithReference": "{message} Referans: {referenceId}",
+    "serviceStatusTitle": "Giriş hizmeti kullanılamıyor",
+    "serviceStatusUnavailable": "Kimlik doğrulama hizmetine ulaşılamadığı için kayıt ve giriş geçici olarak kullanılamıyor.",
+    "serviceMissingConfig": "Kimlik doğrulama yapılandırılmadığı için kayıt ve giriş kullanılamıyor."
   },
   "Pending": {
     "title": "Onay bekleniyor",

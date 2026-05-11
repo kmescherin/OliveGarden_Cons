@@ -98,7 +98,10 @@
     "loginError": "Не удалось войти. Проверьте email и пароль.",
     "magicLinkError": "Не удалось отправить ссылку на email. Попробуйте снова.",
     "serviceUnavailable": "Сервис временно недоступен. Попробуйте ещё раз чуть позже.",
-    "errorWithReference": "{message} Код: {referenceId}"
+    "errorWithReference": "{message} Код: {referenceId}",
+    "serviceStatusTitle": "Сервис входа недоступен",
+    "serviceStatusUnavailable": "Регистрация и вход временно недоступны: не удаётся подключиться к сервису аутентификации.",
+    "serviceMissingConfig": "Регистрация и вход недоступны: аутентификация не настроена."
   },
   "Pending": {
     "title": "Ожидается подтверждение",

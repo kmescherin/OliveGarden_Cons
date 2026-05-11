@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { AuthHealthNotice } from "@/features/auth/auth-health-notice";
 import { LoginForm } from "@/features/auth/login-form";
 import { SiteHeader } from "@/components/site-header";
 import { redirect } from "next/navigation";
@@ -45,6 +46,7 @@ export default async function LoginPage({ params }: Props) {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <AuthHealthNotice />
             <LoginForm />
           </CardContent>
         </Card>
