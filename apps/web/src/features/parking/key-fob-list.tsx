@@ -26,6 +26,12 @@ const typeKey: Record<string, string> = {
   other: "typeOther",
 };
 
+const statusKey: Record<KeyFob["status"], string> = {
+  issued: "statusIssued",
+  returned: "statusReturned",
+  lost: "statusLost",
+};
+
 export function KeyFobList({ keys }: { keys: KeyFob[] }) {
   const t = useTranslations("KeyFobs");
 
@@ -44,7 +50,7 @@ export function KeyFobList({ keys }: { keys: KeyFob[] }) {
                 <CardTitle className="text-base">{k.identifier}</CardTitle>
               </div>
               <Badge variant={statusVariant[k.status] ?? "secondary"}>
-                {t(`status${k.status.charAt(0).toUpperCase() + k.status.slice(1)}` as any)}
+                {t(statusKey[k.status])}
               </Badge>
             </div>
           </CardHeader>

@@ -25,6 +25,12 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
   removed: "destructive",
 };
 
+const statusKey: Record<Vehicle["status"], string> = {
+  active: "statusActive",
+  expired: "statusExpired",
+  removed: "statusRemoved",
+};
+
 export function VehicleForm({
   vehicles,
   locale,
@@ -146,7 +152,7 @@ export function VehicleForm({
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base">{v.plate_number}</CardTitle>
                   <Badge variant={statusVariant[v.status] ?? "secondary"}>
-                    {t(`status${v.status.charAt(0).toUpperCase() + v.status.slice(1)}` as any)}
+                    {t(statusKey[v.status])}
                   </Badge>
                 </div>
               </CardHeader>

@@ -93,7 +93,12 @@
     "confirmEmail": "Аккаунт создан. Подтвердите email по ссылке из письма, затем войдите.",
     "registerSuccess": "Регистрация прошла успешно.",
     "passwordTooShort": "Пароль должен содержать минимум 8 символов",
-    "passwordRequirements": "Пароль должен содержать буквы и цифры"
+    "passwordRequirements": "Пароль должен содержать буквы и цифры",
+    "registerError": "Не удалось зарегистрироваться. Проверьте данные и попробуйте снова.",
+    "loginError": "Не удалось войти. Проверьте email и пароль.",
+    "magicLinkError": "Не удалось отправить ссылку на email. Попробуйте снова.",
+    "serviceUnavailable": "Сервис временно недоступен. Попробуйте ещё раз чуть позже.",
+    "errorWithReference": "{message} Код: {referenceId}"
   },
   "Pending": {
     "title": "Ожидается подтверждение",
@@ -118,6 +123,9 @@
     "save": "Сохранить",
     "saved": "Сохранено",
     "saveError": "Войдите снова",
+    "updateError": "Не удалось сохранить профиль. Попробуйте снова.",
+    "serviceUnavailable": "Сервис временно недоступен. Попробуйте ещё раз чуть позже.",
+    "errorWithReference": "{message} Код: {referenceId}",
     "statusPending": "На проверке",
     "statusApproved": "Подтверждён",
     "statusRejected": "Отклонён"

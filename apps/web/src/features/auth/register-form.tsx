@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import {
+  createErrorReference,
+  logActionError,
+  normalizeAppError,
+} from "@/lib/error-management";
 
 export function RegisterForm() {
   const t = useTranslations("Auth");
@@ -51,33 +56,69 @@ export function RegisterForm() {
     const origin =
       typeof window !== "undefined" ? window.location.origin : "";
     const fullName = `${firstName} ${lastName}`;
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        emailRedirectTo: `${origin}/${locale}/auth/callback`,
-        data: {
-          full_name: fullName,
-          first_name: firstName,
-          last_name: lastName,
-          phone: form.phone,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          emailRedirectTo: `${origin}/${locale}/auth/callback`,
+          data: {
+            full_name: fullName,
+            first_name: firstName,
+            last_name: lastName,
+            phone: form.phone,
+            block: form.block,
+            apartment: form.apartment,
+          },
+        },
+      });
+      if (error) {
+        showRegistrationError(error);
+        return;
+      }
+      if (data.session) {
+        toast.success(t("registerSuccess"));
+        router.push("/pending");
+        router.refresh();
+        return;
+      }
+      toast.success(t("confirmEmail"));
+    } catch (error) {
+      showRegistrationError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function showRegistrationError(error: unknown) {
+    const referenceId = createErrorReference("auth_register");
+    const normalized = normalizeAppError(error, {
+      fallbackMessage: t("registerError"),
+      referenceId,
+    });
+    logActionError(
+      {
+        action: "auth.register",
+        referenceId,
+        locale,
+        email: form.email,
+        metadata: {
           block: form.block,
           apartment: form.apartment,
         },
       },
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    if (data.session) {
-      toast.success(t("registerSuccess"));
-      router.push("/pending");
-      router.refresh();
-      return;
-    }
-    toast.success(t("confirmEmail"));
+      error,
+    );
+    const message =
+      normalized.code === "service_unavailable"
+        ? t("serviceUnavailable")
+        : normalized.safeMessage;
+    toast.error(
+      t("errorWithReference", {
+        message,
+        referenceId: normalized.referenceId,
+      }),
+    );
   }
 
   return (
