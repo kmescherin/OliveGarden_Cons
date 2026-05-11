@@ -37,6 +37,10 @@ type ActionFailureOptions = {
   logger?: Logger;
 };
 
+type ApiFailureOptions = ActionFailureOptions & {
+  status?: number;
+};
+
 const SERVICE_UNAVAILABLE_MESSAGE =
   "The service is temporarily unavailable. Please try again shortly.";
 
@@ -105,6 +109,21 @@ export function createActionFailure(
     ok: false as const,
     error: `${options.fallbackError}. Reference: ${referenceId}`,
     referenceId,
+  };
+}
+
+export function createApiFailure(
+  action: string,
+  error: unknown,
+  options: ApiFailureOptions,
+) {
+  const failure = createActionFailure(action, error, options);
+  return {
+    status: options.status ?? 500,
+    body: {
+      error: failure.error,
+      referenceId: failure.referenceId,
+    },
   };
 }
 
@@ -194,6 +213,8 @@ function sanitizeObject(value: Record<string, unknown>): Record<string, unknown>
 function sanitizeValue(value: unknown): unknown {
   if (typeof value === "string") {
     return value
+      .replace(/\bsk-[A-Za-z0-9_-]+/g, "[redacted-key]")
+      .replace(/api-key\s+[^\s,}"']+/gi, "api-key [redacted]")
       .replace(/password=\\?"[^"]+\\?"/gi, "credential=[redacted]")
       .replace(/password=([^,\s}"']+)/gi, "credential=[redacted]")
       .replace(/password\\?":\\?"[^"]+"/gi, 'credential":"[redacted]"')

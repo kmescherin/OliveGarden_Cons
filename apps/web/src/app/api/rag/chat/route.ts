@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ragChatSchema } from "@/lib/validations";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { createActionFailure } from "@/lib/error-management";
+import { createActionFailure, createApiFailure } from "@/lib/error-management";
 
 export const runtime = "nodejs";
 
@@ -67,9 +67,14 @@ export async function POST(req: Request) {
 
   if (!embedRes.ok) {
     const err = await embedRes.text();
+    const failure = createApiFailure("api.rag.chat.embedding", err, {
+      fallbackError: "Could not prepare your question",
+      status: 502,
+      userId: user.id,
+    });
     return NextResponse.json(
-      { error: "Embedding failed", detail: err },
-      { status: 502 },
+      failure.body,
+      { status: failure.status },
     );
   }
 
@@ -151,9 +156,14 @@ export async function POST(req: Request) {
 
   if (!chatRes.ok) {
     const err = await chatRes.text();
+    const failure = createApiFailure("api.rag.chat.llm", err, {
+      fallbackError: "Could not generate answer",
+      status: 502,
+      userId: user.id,
+    });
     return NextResponse.json(
-      { error: "LLM failed", detail: err },
-      { status: 502 },
+      failure.body,
+      { status: failure.status },
     );
   }
 
