@@ -146,6 +146,47 @@ test("builds safe Supabase health diagnostics without exposing credentials", asy
   assert.doesNotMatch(serialized, /service-secret/);
 });
 
+test("auth health notice is shown only when auth dependencies are unavailable", () => {
+  const degraded = healthDiagnostics.getAuthHealthNotice({
+    status: "degraded",
+    timestamp: "2026-05-11T09:00:00.000Z",
+    env: {
+      siteUrl: "http://localhost:3000",
+      supabaseUrlConfigured: true,
+      anonKeyConfigured: true,
+      serviceRoleConfigured: true,
+    },
+    supabase: {
+      configured: true,
+      reachable: false,
+      url: "http://127.0.0.1:54321",
+      errorCode: "service_unavailable",
+    },
+  });
+
+  const healthy = healthDiagnostics.getAuthHealthNotice({
+    status: "ok",
+    timestamp: "2026-05-11T09:00:00.000Z",
+    env: {
+      siteUrl: "http://localhost:3000",
+      supabaseUrlConfigured: true,
+      anonKeyConfigured: true,
+      serviceRoleConfigured: true,
+    },
+    supabase: {
+      configured: true,
+      reachable: true,
+      url: "http://127.0.0.1:54321",
+    },
+  });
+
+  assert.deepEqual(degraded, {
+    show: true,
+    reason: "service_unavailable",
+  });
+  assert.deepEqual(healthy, { show: false });
+});
+
 test("creates safe API failure payloads without upstream details", () => {
   const loggerCalls = [];
   const response = errorManagement.createApiFailure(
