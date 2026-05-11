@@ -33,7 +33,7 @@ export default async function HomePage({ params }: Props) {
             <h1 className="mx-auto max-w-[11ch] text-4xl leading-[1.05] font-light tracking-[0.01em] text-foreground sm:max-w-none sm:text-5xl md:text-7xl">
               {t("title")}
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+            <p className="mx-auto mt-6 max-w-[30ch] text-lg leading-8 text-muted-foreground sm:max-w-2xl md:text-xl">
               {t("subtitle")}
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-4">
