@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import {
+  createErrorReference,
+  logActionError,
+  normalizeAppError,
+} from "@/lib/error-management";
 
 export function LoginForm() {
   const t = useTranslations("Auth");
@@ -22,17 +27,22 @@ export function LoginForm() {
     e.preventDefault();
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        showAuthError("auth.login.password", error, "loginError");
+        return;
+      }
+      router.push("/dashboard");
+      router.refresh();
+    } catch (error) {
+      showAuthError("auth.login.password", error, "loginError");
+    } finally {
+      setLoading(false);
     }
-    router.push("/dashboard");
-    router.refresh();
   }
 
   async function onMagicSubmit(e: React.FormEvent) {
@@ -41,18 +51,56 @@ export function LoginForm() {
     const supabase = createClient();
     const origin =
       typeof window !== "undefined" ? window.location.origin : "";
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${origin}/${locale}/auth/callback`,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${origin}/${locale}/auth/callback`,
+        },
+      });
+      if (error) {
+        showAuthError("auth.login.magic_link", error, "magicLinkError");
+        return;
+      }
+      toast.success(t("magicLinkSent"));
+    } catch (error) {
+      showAuthError("auth.login.magic_link", error, "magicLinkError");
+    } finally {
+      setLoading(false);
     }
-    toast.success(t("magicLinkSent"));
+  }
+
+  function showAuthError(
+    action: "auth.login.password" | "auth.login.magic_link",
+    error: unknown,
+    fallbackKey: "loginError" | "magicLinkError",
+  ) {
+    const referenceId = createErrorReference(
+      action === "auth.login.password" ? "auth_login" : "auth_magic",
+    );
+    const normalized = normalizeAppError(error, {
+      fallbackMessage: t(fallbackKey),
+      referenceId,
+    });
+    logActionError(
+      {
+        action,
+        referenceId,
+        locale,
+        email,
+      },
+      error,
+    );
+    const message =
+      normalized.code === "service_unavailable"
+        ? t("serviceUnavailable")
+        : normalized.safeMessage;
+    toast.error(
+      t("errorWithReference", {
+        message,
+        referenceId: normalized.referenceId,
+      }),
+    );
   }
 
   return (

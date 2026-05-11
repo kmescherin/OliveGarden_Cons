@@ -7,6 +7,7 @@
     "build": "next build",
     "build:safe": "bash scripts/build-safe.sh",
     "typecheck": "tsc --noEmit -p .",
+    "test:error-management": "node --test scripts/error-management.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },
