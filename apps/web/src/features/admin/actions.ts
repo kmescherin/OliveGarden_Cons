@@ -7,6 +7,7 @@ import { getStaffFlags } from "@/lib/profile";
 import type { AppRole } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 import { grantRoleSchema, grantRoleByEmailSchema } from "@/lib/validations";
+import { createActionFailure } from "@/lib/error-management";
 
 async function assertAdmin() {
   const f = await getStaffFlags();
@@ -62,7 +63,11 @@ export async function grantAppRole(
     if (error.code === "23505") {
       return { ok: true as const };
     }
-    return { ok: false as const, error: error.message };
+    return createActionFailure("admin.roles.grant", error, {
+      fallbackError: "Could not grant role",
+      locale,
+      metadata: { userId: parsed.data.userId, role: parsed.data.role },
+    });
   }
   revalidatePath(`/${locale}/admin/users`);
   return { ok: true as const };
@@ -102,7 +107,11 @@ export async function revokeAppRole(
     .eq("user_id", parsed.data.userId)
     .eq("role", parsed.data.role);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("admin.roles.revoke", error, {
+      fallbackError: "Could not revoke role",
+      locale,
+      metadata: { userId: parsed.data.userId, role: parsed.data.role },
+    });
   }
   revalidatePath(`/${locale}/admin/users`);
   return { ok: true as const };
@@ -128,10 +137,11 @@ export async function grantRoleByEmail(
   try {
     users = await listAuthUsersPages();
   } catch (e) {
-    return {
-      ok: false as const,
-      error: e instanceof Error ? e.message : "list_users_failed",
-    };
+    return createActionFailure("admin.users.list_auth", e, {
+      fallbackError: "Could not list users",
+      locale,
+      metadata: { email: normalized, role: parsed.data.role },
+    });
   }
   const u = users.find((x) => (x.email ?? "").toLowerCase() === normalized);
   if (!u) {

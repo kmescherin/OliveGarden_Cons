@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export const runtime = "nodejs";
 
@@ -66,7 +67,19 @@ export async function POST(req: Request) {
     .single();
 
   if (docError || !doc) {
-    return NextResponse.json({ error: docError?.message ?? "Failed to create document" }, { status: 500 });
+    const failure = createActionFailure(
+      "api.rag.ingest.create_document",
+      docError ?? new Error("Document insert returned no row"),
+      {
+        fallbackError: "Could not create document",
+        userId: user.id,
+        metadata: { title },
+      },
+    );
+    return NextResponse.json(
+      { error: failure.error, referenceId: failure.referenceId },
+      { status: 500 },
+    );
   }
 
   const chunks = chunkText(text);
@@ -107,7 +120,15 @@ export async function POST(req: Request) {
   const { error: insertError } = await admin.from("document_chunks").insert(chunkRows);
   if (insertError) {
     await admin.from("knowledge_documents").delete().eq("id", doc.id);
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
+    const failure = createActionFailure("api.rag.ingest.insert_chunks", insertError, {
+      fallbackError: "Could not index document",
+      userId: user.id,
+      metadata: { documentId: doc.id, chunkCount: chunkRows.length },
+    });
+    return NextResponse.json(
+      { error: failure.error, referenceId: failure.referenceId },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ ok: true, documentId: doc.id, chunkCount: chunks.length });
@@ -135,7 +156,15 @@ export async function DELETE(req: Request) {
   const admin = createAdminClient();
   const { error } = await admin.from("knowledge_documents").delete().eq("id", documentId);
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const failure = createActionFailure("api.rag.ingest.delete_document", error, {
+      fallbackError: "Could not delete document",
+      userId: user.id,
+      metadata: { documentId },
+    });
+    return NextResponse.json(
+      { error: failure.error, referenceId: failure.referenceId },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ ok: true });

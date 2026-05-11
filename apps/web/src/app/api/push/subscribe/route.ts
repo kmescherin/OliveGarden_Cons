@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -29,7 +30,15 @@ export async function POST(req: Request) {
   );
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const failure = createActionFailure("api.push.subscribe", error, {
+      fallbackError: "Could not enable push notifications",
+      userId: user.id,
+      metadata: { endpoint },
+    });
+    return NextResponse.json(
+      { error: failure.error, referenceId: failure.referenceId },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ ok: true });

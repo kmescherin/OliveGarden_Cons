@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getStaffFlags } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function issueKeyFob(locale: string, formData: FormData) {
   const flags = await getStaffFlags();
@@ -27,7 +28,13 @@ export async function issueKeyFob(locale: string, formData: FormData) {
     notes,
   });
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error) {
+    return createActionFailure("parking.key_fob.issue", error, {
+      fallbackError: "Could not issue key or fob",
+      locale,
+      metadata: { userId: user_id, keyType: key_type, identifier },
+    });
+  }
 
   revalidatePath(`/${locale}/board/parking`);
   revalidatePath(`/${locale}/dashboard/parking`);
@@ -54,7 +61,13 @@ export async function updateKeyFobStatus(
     .update({ status })
     .eq("id", id);
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error) {
+    return createActionFailure("parking.key_fob.update_status", error, {
+      fallbackError: "Could not update key or fob",
+      locale,
+      metadata: { keyFobId: id, status },
+    });
+  }
 
   revalidatePath(`/${locale}/board/parking`);
   revalidatePath(`/${locale}/dashboard/parking`);
