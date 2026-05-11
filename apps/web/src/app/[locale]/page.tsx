@@ -28,9 +28,9 @@ export default async function HomePage({ params }: Props) {
       <SiteHeader user={user} />
       <main className="flex flex-1 flex-col">
         <section className="public-shell flex min-h-[calc(100svh-4rem)] items-center py-16 text-center">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto w-full min-w-0 max-w-4xl">
             <p className="public-kicker mb-5">{t("badge")}</p>
-            <h1 className="text-5xl leading-[1.05] font-light tracking-[0.01em] text-foreground md:text-7xl">
+            <h1 className="mx-auto max-w-[11ch] text-4xl leading-[1.05] font-light tracking-[0.01em] text-foreground sm:max-w-none sm:text-5xl md:text-7xl">
               {t("title")}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
