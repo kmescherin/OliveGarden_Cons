@@ -93,7 +93,12 @@
     "confirmEmail": "Hesap oluşturuldu. E-postadaki bağlantıyı onaylayın, ardından giriş yapın.",
     "registerSuccess": "Kayıt tamamlandı.",
     "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
-    "passwordRequirements": "Şifre harf ve rakam içermelidir"
+    "passwordRequirements": "Şifre harf ve rakam içermelidir",
+    "registerError": "Kayıt yapılamadı. Bilgilerinizi kontrol edip tekrar deneyin.",
+    "loginError": "Giriş yapılamadı. E-posta ve şifrenizi kontrol edin.",
+    "magicLinkError": "E-posta bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
+    "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin.",
+    "errorWithReference": "{message} Referans: {referenceId}"
   },
   "Pending": {
     "title": "Onay bekleniyor",
@@ -118,6 +123,9 @@
     "save": "Kaydet",
     "saved": "Kaydedildi",
     "saveError": "Lütfen tekrar giriş yapın",
+    "updateError": "Profiliniz kaydedilemedi. Lütfen tekrar deneyin.",
+    "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin.",
+    "errorWithReference": "{message} Referans: {referenceId}",
     "statusPending": "İncelemede",
     "statusApproved": "Onaylandı",
     "statusRejected": "Reddedildi"
