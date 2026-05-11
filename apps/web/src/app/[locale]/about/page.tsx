@@ -27,7 +27,6 @@ export default async function AboutPage({ params }: Props) {
       <SiteHeader user={user} />
       <main className="public-shell flex-1 py-16 md:py-24">
         <article className="max-w-4xl">
-          <p className="public-kicker mb-4">{t("title")}</p>
           <h1 className="public-heading">{t("title")}</h1>
           <p className="public-lead mt-6">{t("lead")}</p>
           <div className="mt-12 max-w-3xl space-y-0 text-muted-foreground">
