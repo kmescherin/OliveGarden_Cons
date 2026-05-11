@@ -145,3 +145,32 @@ test("builds safe Supabase health diagnostics without exposing credentials", asy
   assert.doesNotMatch(serialized, /anon-secret/);
   assert.doesNotMatch(serialized, /service-secret/);
 });
+
+test("creates safe API failure payloads without upstream details", () => {
+  const loggerCalls = [];
+  const response = errorManagement.createApiFailure(
+    "api.rag.chat.llm",
+    "OpenAI 502: api-key sk-secret failed for resident@example.com",
+    {
+      fallbackError: "Could not generate answer",
+      referenceId: "api_ref_123",
+      status: 502,
+      logger: {
+        error: (...args) => loggerCalls.push(args),
+      },
+    },
+  );
+
+  assert.equal(response.status, 502);
+  assert.deepEqual(response.body, {
+    error: "Could not generate answer. Reference: api_ref_123",
+    referenceId: "api_ref_123",
+  });
+
+  const serialized = JSON.stringify(loggerCalls);
+  assert.match(serialized, /api\.rag\.chat\.llm/);
+  assert.match(serialized, /api_ref_123/);
+  assert.doesNotMatch(JSON.stringify(response.body), /OpenAI|sk-secret|resident@example\.com/);
+  assert.doesNotMatch(serialized, /sk-secret/);
+  assert.doesNotMatch(serialized, /resident@example\.com/);
+});
