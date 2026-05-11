@@ -1,8 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { BorderBeam } from "@/components/ui/border-beam";
 import { HeroCtas } from "@/features/marketing/hero-ctas";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,50 +26,56 @@ export default async function HomePage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
-      <main className="container flex flex-1 flex-col gap-12 py-10">
-        <section className="relative overflow-hidden rounded-2xl border bg-card p-8 md:p-12">
-          <BorderBeam size={300} duration={10} />
-          <Badge variant="secondary" className="mb-4">
-            {t("badge")}
-          </Badge>
-          <h1 className="font-heading text-4xl font-semibold tracking-tight md:text-5xl">
-            {t("title")}
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-            {t("subtitle")}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <HeroCtas loggedIn={Boolean(user)} />
+      <main className="flex flex-1 flex-col">
+        <section className="public-shell flex min-h-[calc(100svh-4rem)] items-center py-16 text-center">
+          <div className="mx-auto max-w-4xl">
+            <p className="public-kicker mb-5">{t("badge")}</p>
+            <h1 className="text-5xl leading-[1.05] font-light tracking-[0.01em] text-foreground md:text-7xl">
+              {t("title")}
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+              {t("subtitle")}
+            </p>
+            <div className="mt-9 flex flex-wrap justify-center gap-4">
+              <HeroCtas loggedIn={Boolean(user)} />
+            </div>
           </div>
         </section>
 
-        <section>
-          <h2 className="mb-6 text-2xl font-semibold">{t("featuresTitle")}</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("f1Title")}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
+        <section className="public-shell public-section">
+          <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="public-kicker mb-3">{t("badge")}</p>
+              <h2 className="public-heading">{t("featuresTitle")}</h2>
+            </div>
+            <p className="public-lead md:max-w-md">{t("subtitle")}</p>
+          </div>
+
+          <div className="grid gap-0 md:grid-cols-3">
+            <article className="public-panel md:border-r-0">
+              <h3 className="text-2xl font-light tracking-[0.01em]">
+                {t("f1Title")}
+              </h3>
+              <p className="mt-4 leading-7 text-muted-foreground">
                 {t("f1Desc")}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("f2Title")}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
+              </p>
+            </article>
+            <article className="public-panel md:border-r-0">
+              <h3 className="text-2xl font-light tracking-[0.01em]">
+                {t("f2Title")}
+              </h3>
+              <p className="mt-4 leading-7 text-muted-foreground">
                 {t("f2Desc")}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("f3Title")}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
+              </p>
+            </article>
+            <article className="public-panel">
+              <h3 className="text-2xl font-light tracking-[0.01em]">
+                {t("f3Title")}
+              </h3>
+              <p className="mt-4 leading-7 text-muted-foreground">
                 {t("f3Desc")}
-              </CardContent>
-            </Card>
+              </p>
+            </article>
           </div>
         </section>
       </main>
