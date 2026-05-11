@@ -26,23 +26,27 @@ export default async function ZonesPage({ params }: Props) {
     <Suspense fallback={<CardGridSkeleton count={4} />}>
       <div className="space-y-10">
       <h1 className="public-heading">{t("zones")}</h1>
-      <ul className="grid gap-4 md:grid-cols-2">
-        {(zones ?? []).map((z) => (
-          <li key={z.id}>
-            <Card className="public-panel">
-              <CardHeader>
-                <CardTitle>{z.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                {z.description ? <p>{z.description}</p> : null}
-                {z.schedule ? (
-                  <p className="font-medium text-foreground">{z.schedule}</p>
-                ) : null}
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
+      {(zones ?? []).length === 0 ? (
+        <p className="text-sm text-muted-foreground">No social areas listed yet.</p>
+      ) : (
+        <ul className="grid gap-4 md:grid-cols-2">
+          {(zones ?? []).map((z) => (
+            <li key={z.id}>
+              <Card className="public-panel">
+                <CardHeader>
+                  <CardTitle>{z.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm text-muted-foreground">
+                  {z.description ? <p>{z.description}</p> : null}
+                  {z.schedule ? (
+                    <p className="font-medium text-foreground">{z.schedule}</p>
+                  ) : null}
+                </CardContent>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
     </Suspense>
   );

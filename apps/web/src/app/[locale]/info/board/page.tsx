@@ -29,7 +29,7 @@ export default async function BoardPage({ params }: Props) {
       <div className="space-y-10">
       <h1 className="public-heading">{t("board")}</h1>
       {(members ?? []).length === 0 ? (
-        <p className="text-sm text-muted-foreground">—</p>
+        <p className="text-sm text-muted-foreground">No board members listed yet.</p>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {(members ?? []).map((m) => (
