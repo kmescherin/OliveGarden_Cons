@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function saveCandidate(
   locale: string,
@@ -35,7 +36,11 @@ export async function saveCandidate(
   }
 
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("elections.candidates.save", error, {
+      fallbackError: "Could not save candidate",
+      locale,
+      metadata: { candidateId: id, electionYear: row.election_year },
+    });
   }
 
   revalidatePath(`/${locale}/info/elections`);
@@ -52,7 +57,11 @@ export async function deleteCandidate(locale: string, id: string) {
   const admin = createAdminClient();
   const { error } = await admin.from("election_candidates").delete().eq("id", id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("elections.candidates.delete", error, {
+      fallbackError: "Could not delete candidate",
+      locale,
+      metadata: { candidateId: id },
+    });
   }
 
   revalidatePath(`/${locale}/info/elections`);

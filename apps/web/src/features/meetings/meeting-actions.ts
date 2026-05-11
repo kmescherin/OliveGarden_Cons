@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
 import { createNotificationForAllResidents } from "@/features/notifications/create-notification";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function saveMeeting(
   locale: string,
@@ -41,7 +42,11 @@ export async function saveMeeting(
   }
 
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("meetings.save", error, {
+      fallbackError: "Could not save meeting",
+      locale,
+      metadata: { meetingId: id, status: row.status },
+    });
   }
 
   revalidatePath(`/${locale}/info/meetings`);
@@ -68,7 +73,11 @@ export async function deleteMeeting(locale: string, id: string) {
   const admin = createAdminClient();
   const { error } = await admin.from("meetings").delete().eq("id", id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("meetings.delete", error, {
+      fallbackError: "Could not delete meeting",
+      locale,
+      metadata: { meetingId: id },
+    });
   }
 
   revalidatePath(`/${locale}/info/meetings`);
@@ -108,7 +117,11 @@ export async function saveDecision(
   }
 
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("decisions.save", error, {
+      fallbackError: "Could not save decision",
+      locale,
+      metadata: { meetingId, decisionId: id },
+    });
   }
 
   revalidatePath(`/${locale}/info/meetings`);
@@ -135,7 +148,11 @@ export async function deleteDecision(locale: string, id: string) {
   const admin = createAdminClient();
   const { error } = await admin.from("decisions").delete().eq("id", id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("decisions.delete", error, {
+      fallbackError: "Could not delete decision",
+      locale,
+      metadata: { decisionId: id },
+    });
   }
 
   revalidatePath(`/${locale}/info/meetings`);

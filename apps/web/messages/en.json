@@ -142,6 +142,8 @@
     "selectTypeError": "Select a type",
     "submitted": "Request submitted",
     "submitError": "Could not create request",
+    "serviceUnavailable": "The service is temporarily unavailable. Please try again shortly.",
+    "errorWithReference": "{message} Reference: {referenceId}",
     "noRequests": "No requests yet",
     "noRequestsDesc": "Your service requests will appear here",
     "noPending": "No pending requests",
