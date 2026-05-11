@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit, currentUserId } from "@/lib/audit";
 
 export async function saveServiceType(
   locale: string,
@@ -42,6 +43,14 @@ export async function saveServiceType(
     });
   }
 
+  await recordAudit(supabase, {
+    action: id ? "service_type_updated" : "service_type_created",
+    entityType: "service_type",
+    entityId: id,
+    payload: { key, name },
+    actorId: await currentUserId(),
+  });
+
   revalidatePath(`/${locale}/board/content`);
   revalidatePath(`/${locale}/dashboard/services`);
   return { ok: true as const };
@@ -62,6 +71,13 @@ export async function deleteServiceType(locale: string, id: string) {
       metadata: { serviceTypeId: id },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "service_type_deleted",
+    entityType: "service_type",
+    entityId: id,
+    actorId: await currentUserId(),
+  });
 
   revalidatePath(`/${locale}/board/content`);
   revalidatePath(`/${locale}/dashboard/services`);

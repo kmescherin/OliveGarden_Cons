@@ -8,6 +8,7 @@ import type { AppRole } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 import { grantRoleSchema, grantRoleByEmailSchema } from "@/lib/validations";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit, currentUserId } from "@/lib/audit";
 
 async function assertAdmin() {
   const f = await getStaffFlags();
@@ -69,6 +70,13 @@ export async function grantAppRole(
       metadata: { userId: parsed.data.userId, role: parsed.data.role },
     });
   }
+  await recordAudit(admin, {
+    action: "role_granted",
+    entityType: "user_role",
+    entityId: parsed.data.userId,
+    payload: { role: parsed.data.role },
+    actorId: await currentUserId(),
+  });
   revalidatePath(`/${locale}/admin/users`);
   return { ok: true as const };
 }
@@ -113,6 +121,13 @@ export async function revokeAppRole(
       metadata: { userId: parsed.data.userId, role: parsed.data.role },
     });
   }
+  await recordAudit(admin, {
+    action: "role_revoked",
+    entityType: "user_role",
+    entityId: parsed.data.userId,
+    payload: { role: parsed.data.role },
+    actorId: await currentUserId(),
+  });
   revalidatePath(`/${locale}/admin/users`);
   return { ok: true as const };
 }

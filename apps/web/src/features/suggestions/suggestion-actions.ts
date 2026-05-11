@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, RATE_LIMITS, rateLimitedResponse } from "@/lib/rate-limit";
 import { suggestionSchema, updateSuggestionStatusSchema } from "@/lib/validations";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit } from "@/lib/audit";
 
 export async function submitSuggestion(
   locale: string,
@@ -70,6 +71,14 @@ export async function updateSuggestionStatus(
       metadata: { suggestionId: parsed.data.id, status: parsed.data.status },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "suggestion_status_changed",
+    entityType: "suggestion",
+    entityId: parsed.data.id,
+    payload: { status: parsed.data.status, hasNote: Boolean(parsed.data.boardNote) },
+  });
+
   revalidatePath(`/${locale}/dashboard/suggestions`);
   revalidatePath(`/${locale}/board/suggestions`);
 

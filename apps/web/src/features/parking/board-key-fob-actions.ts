@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getStaffFlags } from "@/lib/profile";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit } from "@/lib/audit";
 
 export async function issueKeyFob(locale: string, formData: FormData) {
   const flags = await getStaffFlags();
@@ -21,12 +22,11 @@ export async function issueKeyFob(locale: string, formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("key_fobs").insert({
-    user_id,
-    key_type,
-    identifier,
-    notes,
-  });
+  const { data: inserted, error } = await supabase
+    .from("key_fobs")
+    .insert({ user_id, key_type, identifier, notes })
+    .select("id")
+    .maybeSingle();
 
   if (error) {
     return createActionFailure("parking.key_fob.issue", error, {
@@ -35,6 +35,13 @@ export async function issueKeyFob(locale: string, formData: FormData) {
       metadata: { userId: user_id, keyType: key_type, identifier },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "key_fob_issued",
+    entityType: "key_fob",
+    entityId: inserted?.id ?? null,
+    payload: { user_id, key_type, identifier },
+  });
 
   revalidatePath(`/${locale}/board/parking`);
   revalidatePath(`/${locale}/dashboard/parking`);
@@ -68,6 +75,13 @@ export async function updateKeyFobStatus(
       metadata: { keyFobId: id, status },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "key_fob_status_changed",
+    entityType: "key_fob",
+    entityId: id,
+    payload: { status },
+  });
 
   revalidatePath(`/${locale}/board/parking`);
   revalidatePath(`/${locale}/dashboard/parking`);

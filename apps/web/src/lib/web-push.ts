@@ -2,21 +2,38 @@ import webpush from "web-push";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 let initialized = false;
+let warnedMissingKeys = false;
 
-export function initWebPush() {
-  if (initialized) return;
+export function isWebPushConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY,
+  );
+}
+
+export function initWebPush(): boolean {
+  if (initialized) return true;
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
-  if (!publicKey || !privateKey) return;
-  webpush.setVapidDetails("mailto:noreply@olivegarden.example", publicKey, privateKey);
+  if (!publicKey || !privateKey) {
+    if (!warnedMissingKeys) {
+      warnedMissingKeys = true;
+      console.warn(
+        "[web-push] VAPID keys not configured (need NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY); push notifications disabled.",
+      );
+    }
+    return false;
+  }
+  const contact = process.env.VAPID_CONTACT_EMAIL ?? "mailto:noreply@olivegarden.example";
+  webpush.setVapidDetails(contact, publicKey, privateKey);
   initialized = true;
+  return true;
 }
 
 export async function sendPushNotification(
   userId: string,
   payload: { title: string; body: string },
 ) {
-  initWebPush();
+  if (!initWebPush()) return;
   const admin = createAdminClient();
   const { data: subs, error } = await admin
     .from("push_subscriptions")

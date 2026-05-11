@@ -12,7 +12,8 @@
     "audit:user-paths": "node scripts/audit-user-paths.mjs",
     "doctor:auth": "node scripts/doctor-auth.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "audit:service-role": "node scripts/audit-service-role.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

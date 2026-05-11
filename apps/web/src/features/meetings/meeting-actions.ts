@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
 import { createNotificationForAllResidents } from "@/features/notifications/create-notification";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit, currentUserId } from "@/lib/audit";
 
 export async function saveMeeting(
   locale: string,
@@ -49,6 +50,14 @@ export async function saveMeeting(
     });
   }
 
+  await recordAudit(admin, {
+    action: id ? "meeting_updated" : "meeting_created",
+    entityType: "meeting",
+    entityId: id,
+    payload: { title, scheduled_at, status: row.status },
+    actorId: await currentUserId(),
+  });
+
   revalidatePath(`/${locale}/info/meetings`);
   revalidatePath(`/${locale}/board/content`);
 
@@ -79,6 +88,13 @@ export async function deleteMeeting(locale: string, id: string) {
       metadata: { meetingId: id },
     });
   }
+
+  await recordAudit(admin, {
+    action: "meeting_deleted",
+    entityType: "meeting",
+    entityId: id,
+    actorId: await currentUserId(),
+  });
 
   revalidatePath(`/${locale}/info/meetings`);
   revalidatePath(`/${locale}/board/content`);
@@ -124,6 +140,14 @@ export async function saveDecision(
     });
   }
 
+  await recordAudit(admin, {
+    action: id ? "decision_updated" : "decision_created",
+    entityType: "decision",
+    entityId: id,
+    payload: { title, meeting_id: meetingId },
+    actorId: await currentUserId(),
+  });
+
   revalidatePath(`/${locale}/info/meetings`);
   revalidatePath(`/${locale}/board/content`);
 
@@ -154,6 +178,13 @@ export async function deleteDecision(locale: string, id: string) {
       metadata: { decisionId: id },
     });
   }
+
+  await recordAudit(admin, {
+    action: "decision_deleted",
+    entityType: "decision",
+    entityId: id,
+    actorId: await currentUserId(),
+  });
 
   revalidatePath(`/${locale}/info/meetings`);
   revalidatePath(`/${locale}/board/content`);
