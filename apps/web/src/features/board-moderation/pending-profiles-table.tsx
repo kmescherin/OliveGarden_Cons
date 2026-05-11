@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 export function PendingProfilesTable({ rows }: { rows: Profile[] }) {
   const t = useTranslations("Board");
@@ -37,7 +38,7 @@ export function PendingProfilesTable({ rows }: { rows: Profile[] }) {
       if (res.error === "reject_requires_note") {
         toast.error(t("rejectNoteRequired"));
       } else {
-        toast.error(res.error);
+        toast.error(getActionErrorMessage(res.error));
       }
       return;
     }

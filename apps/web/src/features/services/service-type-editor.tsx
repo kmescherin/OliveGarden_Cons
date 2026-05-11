@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 export function ServiceTypeEditor({ types }: { types: ServiceType[] }) {
   const t = useTranslations("ServiceTypes");
@@ -66,7 +67,7 @@ export function ServiceTypeEditor({ types }: { types: ServiceType[] }) {
     const res = await saveServiceType(locale, editingId, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -79,7 +80,7 @@ export function ServiceTypeEditor({ types }: { types: ServiceType[] }) {
     const res = await deleteServiceType(locale, id);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("delete"));

@@ -18,6 +18,7 @@ import { EmptyState } from "@/components/empty-state";
 import { toast } from "sonner";
 import { Car, Trash2 } from "lucide-react";
 import type { Vehicle } from "@/types/database";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   active: "default",
@@ -65,7 +66,7 @@ export function VehicleForm({
     const res = await addVehicle(locale, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -80,7 +81,7 @@ export function VehicleForm({
   async function onRemove(id: string) {
     const res = await removeVehicle(locale, id);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     router.refresh();

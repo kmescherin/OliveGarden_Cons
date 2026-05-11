@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 export type AdminUserRow = {
   id: string;
@@ -50,7 +51,7 @@ export function AdminUsersTable({ rows }: { rows: AdminUserRow[] }) {
     setBusy(null);
     if (!res.ok) {
       if (res.error === "forbidden") toast.error(t("forbidden"));
-      else toast.error(res.error);
+      else toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("toastGranted"));
@@ -64,7 +65,7 @@ export function AdminUsersTable({ rows }: { rows: AdminUserRow[] }) {
     if (!res.ok) {
       if (res.error === "last_admin") toast.error(t("lastAdmin"));
       else if (res.error === "forbidden") toast.error(t("forbidden"));
-      else toast.error(res.error);
+      else toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("toastRevoked"));
@@ -80,7 +81,7 @@ export function AdminUsersTable({ rows }: { rows: AdminUserRow[] }) {
       if (res.error === "user_not_found") toast.error(t("userNotFound"));
       else if (res.error === "bad_email") toast.error(t("badEmail"));
       else if (res.error === "forbidden") toast.error(t("forbidden"));
-      else toast.error(res.error);
+      else toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("toastGranted"));

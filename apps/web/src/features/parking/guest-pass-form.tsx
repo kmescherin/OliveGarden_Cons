@@ -25,6 +25,7 @@ import { EmptyState } from "@/components/empty-state";
 import { toast } from "sonner";
 import { Car, Footprints, X } from "lucide-react";
 import type { GuestPass } from "@/types/database";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   pending: "outline",
@@ -71,7 +72,7 @@ export function GuestPassForm({
     const res = await createGuestPass(locale, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -87,7 +88,7 @@ export function GuestPassForm({
   async function onCancel(id: string) {
     const res = await cancelGuestPass(locale, id);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     router.refresh();
