@@ -27,6 +27,7 @@ async function loadTsModule(relativePath) {
 }
 
 const errorManagement = await loadTsModule("src/lib/error-management.ts");
+const healthDiagnostics = await loadTsModule("src/lib/health-diagnostics.ts");
 
 test("normalizes Supabase fetch failures as a service outage with a public reference", () => {
   const error = {
@@ -108,4 +109,39 @@ test("creates safe server action failures with logged diagnostics", () => {
   assert.match(serialized, /23505/);
   assert.doesNotMatch(serialized, /resident@example\.com/);
   assert.doesNotMatch(serialized, /secret/);
+});
+
+test("builds safe Supabase health diagnostics without exposing credentials", async () => {
+  const report = await healthDiagnostics.buildHealthReport({
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-secret",
+      SUPABASE_SERVICE_ROLE_KEY: "service-secret",
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+    },
+    timeoutMs: 20,
+    fetchImpl: async () => {
+      throw Object.assign(new Error("connect ECONNREFUSED 127.0.0.1:54321"), {
+        code: "ECONNREFUSED",
+      });
+    },
+    now: () => "2026-05-11T09:00:00.000Z",
+  });
+
+  assert.equal(report.status, "degraded");
+  assert.equal(report.timestamp, "2026-05-11T09:00:00.000Z");
+  assert.equal(report.supabase.configured, true);
+  assert.equal(report.supabase.reachable, false);
+  assert.equal(report.supabase.url, "http://127.0.0.1:54321");
+  assert.equal(report.supabase.errorCode, "service_unavailable");
+  assert.deepEqual(report.env, {
+    siteUrl: "http://localhost:3000",
+    supabaseUrlConfigured: true,
+    anonKeyConfigured: true,
+    serviceRoleConfigured: true,
+  });
+
+  const serialized = JSON.stringify(report);
+  assert.doesNotMatch(serialized, /anon-secret/);
+  assert.doesNotMatch(serialized, /service-secret/);
 });
