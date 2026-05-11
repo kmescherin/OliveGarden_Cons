@@ -11,8 +11,9 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   if (loggedIn) {
     return (
       <ShimmerButton
-        background="oklch(0.205 0 0)"
-        className="text-primary-foreground"
+        background="var(--color-mercury-blue)"
+        shimmerColor="var(--color-ghost-blue)"
+        className="rounded-full px-6 text-primary-foreground"
         onClick={() => router.push("/dashboard")}
       >
         {t("ctaDashboard")}
@@ -23,16 +24,17 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   return (
     <>
       <ShimmerButton
-        background="oklch(0.205 0 0)"
-        className="text-primary-foreground"
+        background="var(--color-mercury-blue)"
+        shimmerColor="var(--color-ghost-blue)"
+        className="rounded-full px-6 text-primary-foreground"
         onClick={() => router.push("/login")}
       >
         {t("ctaLogin")}
       </ShimmerButton>
       <ShimmerButton
-        background="oklch(0.97 0 0)"
-        shimmerColor="oklch(0.205 0 0)"
-        className="text-foreground"
+        background="rgb(205 221 255 / 0.16)"
+        shimmerColor="var(--color-ghost-blue)"
+        className="rounded-full border border-border px-6 text-foreground"
         onClick={() => router.push("/register")}
       >
         {t("ctaRegister")}

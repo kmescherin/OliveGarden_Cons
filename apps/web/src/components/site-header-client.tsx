@@ -36,7 +36,7 @@ export function SiteHeaderClient({
         href="/about"
         className={cn(
           buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start md:justify-center",
+          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
         )}
         onClick={() => setMobileOpen(false)}
       >
@@ -46,7 +46,7 @@ export function SiteHeaderClient({
         href="/contacts"
         className={cn(
           buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start md:justify-center",
+          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
         )}
         onClick={() => setMobileOpen(false)}
       >
@@ -61,7 +61,7 @@ export function SiteHeaderClient({
         href="/dashboard"
         className={cn(
           buttonVariants({ variant: "ghost", size: "sm" }),
-          "justify-start md:justify-center",
+          "justify-start text-muted-foreground hover:text-foreground md:justify-center",
         )}
         onClick={() => setMobileOpen(false)}
       >
@@ -75,7 +75,7 @@ export function SiteHeaderClient({
   ) : (
     <Link
       href="/login"
-      className={cn(buttonVariants({ size: "sm" }), "justify-center")}
+      className={cn(buttonVariants({ size: "sm" }), "justify-center px-5")}
       onClick={() => setMobileOpen(false)}
     >
       {t("login")}
@@ -83,10 +83,13 @@ export function SiteHeaderClient({
   );
 
   return (
-    <header className="border-b bg-background/80 backdrop-blur">
-      <div className="container flex h-14 items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/78 backdrop-blur-xl">
+      <div className="public-shell flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-2">
-          <Link href="/" className="shrink-0 font-semibold tracking-tight">
+          <Link
+            href="/"
+            className="shrink-0 text-sm font-medium tracking-[0.02em] text-foreground"
+          >
             {t("home")}
           </Link>
           <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
@@ -102,13 +105,16 @@ export function SiteHeaderClient({
             <SheetTrigger
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
-                "shrink-0 md:hidden",
+                "shrink-0 border border-border md:hidden",
               )}
               aria-label={t("menu")}
             >
               <MenuIcon className="size-5" />
             </SheetTrigger>
-            <SheetContent side="right" className="w-[min(100vw-2rem,20rem)]">
+            <SheetContent
+              side="right"
+              className="w-[min(100vw-2rem,20rem)] border-border bg-card text-card-foreground"
+            >
               <SheetHeader>
                 <SheetTitle>{t("menu")}</SheetTitle>
               </SheetHeader>
@@ -127,8 +133,8 @@ export function SiteHeaderClient({
                   {t("home")}
                 </Link>
                 {navLinks}
-                <div className="border-t pt-3">{authBlock}</div>
-                <div className="border-t pt-3 sm:hidden">
+                <div className="border-t border-border pt-3">{authBlock}</div>
+                <div className="border-t border-border pt-3 sm:hidden">
                   <LocaleSwitcher />
                 </div>
               </nav>

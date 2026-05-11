@@ -25,16 +25,14 @@ export default async function AboutPage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
-      <main className="container flex-1 py-10">
-        <article className="mx-auto max-w-3xl space-y-6">
-          <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
-            {t("title")}
-          </h1>
-          <p className="text-lg text-muted-foreground">{t("lead")}</p>
-          <div className="space-y-4 text-muted-foreground">
-            <p className="whitespace-pre-line">{t("p1")}</p>
-            <p className="whitespace-pre-line">{t("p2")}</p>
-            <p className="whitespace-pre-line">{t("p3")}</p>
+      <main className="public-shell flex-1 py-16 md:py-24">
+        <article className="max-w-4xl">
+          <h1 className="public-heading">{t("title")}</h1>
+          <p className="public-lead mt-6">{t("lead")}</p>
+          <div className="mt-12 max-w-3xl space-y-0 text-muted-foreground">
+            <p className="public-row whitespace-pre-line leading-7">{t("p1")}</p>
+            <p className="public-row whitespace-pre-line leading-7">{t("p2")}</p>
+            <p className="public-row whitespace-pre-line leading-7">{t("p3")}</p>
           </div>
         </article>
       </main>

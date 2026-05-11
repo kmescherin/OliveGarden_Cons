@@ -26,18 +26,18 @@ export default async function AnnouncementsPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton count={3} />}>
-      <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">{t("announcements")}</h1>
+      <div className="space-y-10">
+      <h1 className="public-heading">{t("announcements")}</h1>
       {(items ?? []).length === 0 ? (
-        <p className="text-sm text-muted-foreground">—</p>
+        <p className="text-sm text-muted-foreground">{t("noAnnouncements")}</p>
       ) : (
         <ul className="space-y-4">
           {(items ?? []).map((a) => (
             <li key={a.id}>
-              <Card>
+              <Card className="public-panel">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-base">{a.title}</CardTitle>
+                    <CardTitle className="text-xl font-light tracking-[0.01em]">{a.title}</CardTitle>
                     <Badge variant="secondary" className="text-xs">
                       {a.visibility}
                     </Badge>

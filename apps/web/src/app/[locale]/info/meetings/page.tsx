@@ -58,20 +58,20 @@ export default async function MeetingsInfoPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton count={3} />}>
-      <div className="space-y-8">
-        <h1 className="text-3xl font-semibold">{t("title")}</h1>
+      <div className="space-y-12">
+        <h1 className="public-heading">{t("title")}</h1>
 
         {upcoming.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-xl font-medium">{t("statusScheduled")}</h2>
+            <h2 className="text-2xl font-light tracking-[0.01em]">{t("statusScheduled")}</h2>
             <ul className="space-y-4">
               {upcoming.map((m) => (
                 <li key={m.id}>
-                  <Card>
+                  <Card className="public-panel">
                     <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <CardTitle className="text-base">{m.title}</CardTitle>
-                        <div className="flex gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <CardTitle className="min-w-0 break-words text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
                           <Badge variant="outline">
                             {typeLabel(m.meeting_type)}
                           </Badge>
@@ -104,15 +104,15 @@ export default async function MeetingsInfoPage({ params }: Props) {
 
         {past.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-xl font-medium">{t("statusCompleted")}</h2>
+            <h2 className="text-2xl font-light tracking-[0.01em]">{t("statusCompleted")}</h2>
             <ul className="space-y-4">
               {past.map((m) => (
                 <li key={m.id}>
-                  <Card>
+                  <Card className="public-panel">
                     <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <CardTitle className="text-base">{m.title}</CardTitle>
-                        <div className="flex gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <CardTitle className="min-w-0 break-words text-xl font-light tracking-[0.01em]">{m.title}</CardTitle>
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
                           <Badge variant="outline">
                             {typeLabel(m.meeting_type)}
                           </Badge>
@@ -140,7 +140,7 @@ export default async function MeetingsInfoPage({ params }: Props) {
                           </p>
                           <ul className="mt-1 space-y-1">
                             {m.decisions.map((d) => (
-                              <li key={d.id} className="rounded-lg border p-2">
+                              <li key={d.id} className="break-words border border-border bg-muted/40 p-3">
                                 <p className="font-medium text-foreground">
                                   {d.title}
                                 </p>
