@@ -98,7 +98,10 @@
     "loginError": "Login failed. Please check your email and password.",
     "magicLinkError": "We could not send the email link. Please try again.",
     "serviceUnavailable": "The service is temporarily unavailable. Please try again shortly.",
-    "errorWithReference": "{message} Reference: {referenceId}"
+    "errorWithReference": "{message} Reference: {referenceId}",
+    "serviceStatusTitle": "Sign-in service unavailable",
+    "serviceStatusUnavailable": "Registration and sign-in are temporarily unavailable because the authentication service cannot be reached.",
+    "serviceMissingConfig": "Registration and sign-in are unavailable because authentication is not configured."
   },
   "Pending": {
     "title": "Awaiting approval",

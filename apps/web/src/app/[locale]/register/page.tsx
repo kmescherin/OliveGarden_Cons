@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { AuthHealthNotice } from "@/features/auth/auth-health-notice";
 import { RegisterForm } from "@/features/auth/register-form";
 import { SiteHeader } from "@/components/site-header";
 import { redirect } from "next/navigation";
@@ -45,6 +46,7 @@ export default async function RegisterPage({ params }: Props) {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <AuthHealthNotice />
             <RegisterForm />
           </CardContent>
         </Card>

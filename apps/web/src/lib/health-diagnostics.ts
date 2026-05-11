@@ -34,6 +34,21 @@ export type HealthReport = {
   supabase: SupabaseHealth;
 };
 
+export type AuthHealthNotice =
+  | { show: false }
+  | { show: true; reason: "missing_config" | "service_unavailable" };
+
+export function getAuthHealthNotice(report: HealthReport): AuthHealthNotice {
+  if (report.supabase.reachable) {
+    return { show: false };
+  }
+
+  return {
+    show: true,
+    reason: report.supabase.errorCode ?? "service_unavailable",
+  };
+}
+
 export async function buildHealthReport(
   options: BuildHealthReportOptions = {},
 ): Promise<HealthReport> {
