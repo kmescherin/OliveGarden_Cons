@@ -8,6 +8,7 @@
     "build:safe": "bash scripts/build-safe.sh",
     "typecheck": "tsc --noEmit -p .",
     "test:error-management": "node --test scripts/error-management.test.mjs",
+    "audit:error-surfaces": "node scripts/audit-error-surfaces.mjs",
     "start": "next start",
     "lint": "eslint"
   },

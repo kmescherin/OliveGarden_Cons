@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 export function SuggestionForm({ locale }: { locale: string }) {
   const t = useTranslations("Suggestions");
@@ -27,7 +28,7 @@ export function SuggestionForm({ locale }: { locale: string }) {
     const res = await submitSuggestion(locale, title, body);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("submitted"));

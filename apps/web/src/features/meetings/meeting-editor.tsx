@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, Plus, Trash2, Pencil } from "lucide-react";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 type MeetingWithDecisions = Meeting & { decisions: Decision[] };
 
@@ -81,7 +82,7 @@ function MeetingCard({
     const res = await saveMeeting(locale, meeting.id, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -94,7 +95,7 @@ function MeetingCard({
     const res = await deleteMeeting(locale, meeting.id);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("delete"));
@@ -110,7 +111,7 @@ function MeetingCard({
     const res = await saveDecision(locale, meeting.id, null, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     setDecTitle("");
@@ -125,7 +126,7 @@ function MeetingCard({
     const res = await deleteDecision(locale, decisionId);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("delete"));
@@ -432,7 +433,7 @@ function NewMeetingForm({ locale }: { locale: string }) {
     const res = await saveMeeting(locale, null, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     setTitle("");

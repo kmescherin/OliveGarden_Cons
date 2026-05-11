@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Plus, Trash2, Pencil } from "lucide-react";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 function CandidateCard({
   candidate,
@@ -47,7 +48,7 @@ function CandidateCard({
     const res = await saveCandidate(locale, candidate.id, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -60,7 +61,7 @@ function CandidateCard({
     const res = await deleteCandidate(locale, candidate.id);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("delete"));
@@ -185,7 +186,7 @@ function NewCandidateForm({ locale }: { locale: string }) {
     const res = await saveCandidate(locale, null, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     setFullName("");

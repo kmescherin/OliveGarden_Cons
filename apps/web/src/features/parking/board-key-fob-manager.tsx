@@ -25,6 +25,7 @@ import { EmptyState } from "@/components/empty-state";
 import { toast } from "sonner";
 import { Key } from "lucide-react";
 import type { KeyFob } from "@/types/database";
+import { getActionErrorMessage } from "@/lib/action-error-message";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   issued: "default",
@@ -81,7 +82,7 @@ export function BoardKeyFobManager({
     const res = await issueKeyFob(locale, fd);
     setLoading(false);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     toast.success(t("save"));
@@ -95,7 +96,7 @@ export function BoardKeyFobManager({
   async function onStatusChange(id: string, status: string) {
     const res = await updateKeyFobStatus(locale, id, status);
     if (!res.ok) {
-      toast.error(res.error);
+      toast.error(getActionErrorMessage(res.error));
       return;
     }
     router.refresh();
