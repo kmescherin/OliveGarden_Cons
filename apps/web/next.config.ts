@@ -12,6 +12,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   output: "standalone",
   experimental: {
     serverActions: {
