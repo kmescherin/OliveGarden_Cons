@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { moderateProfileSchema } from "@/lib/validations";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function moderateProfile(
   locale: string,
@@ -29,7 +30,11 @@ export async function moderateProfile(
     note: parsed.data.note,
   });
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("profiles.moderate", error, {
+      fallbackError: "Could not moderate profile",
+      locale,
+      metadata: { targetUserId: parsed.data.targetUserId, status: parsed.data.status },
+    });
   }
   revalidatePath(`/${locale}/board/moderation`);
   return { ok: true as const };

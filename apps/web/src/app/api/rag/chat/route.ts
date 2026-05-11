@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ragChatSchema } from "@/lib/validations";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { createActionFailure } from "@/lib/error-management";
 
 export const runtime = "nodejs";
 
@@ -106,8 +107,12 @@ export async function POST(req: Request) {
   );
 
   if (rpcError) {
+    const failure = createActionFailure("api.rag.chat.match_chunks", rpcError, {
+      fallbackError: "Could not search documents",
+      userId: user.id,
+    });
     return NextResponse.json(
-      { error: rpcError.message },
+      { error: failure.error, referenceId: failure.referenceId },
       { status: 500 },
     );
   }

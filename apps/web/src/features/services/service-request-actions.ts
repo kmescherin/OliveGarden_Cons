@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { serviceRequestSchema, updateServiceStatusSchema } from "@/lib/validations";
 import { checkRateLimit, RATE_LIMITS, rateLimitedResponse } from "@/lib/rate-limit";
 import { getStaffFlags } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function updateServiceRequestStatus(
   locale: string,
@@ -33,7 +34,11 @@ export async function updateServiceRequestStatus(
     .eq("id", parsed.data.requestId)
     .maybeSingle();
   if (fetchErr) {
-    return { ok: false as const, error: fetchErr.message };
+    return createActionFailure("service_requests.fetch_current", fetchErr, {
+      fallbackError: "Could not load service request",
+      locale,
+      metadata: { requestId: parsed.data.requestId },
+    });
   }
   if (current && validTransitions[current.status] && !validTransitions[current.status].includes(parsed.data.status)) {
     return { ok: false as const, error: "invalid_transition" };
@@ -44,7 +49,11 @@ export async function updateServiceRequestStatus(
     .update({ status: parsed.data.status, updated_at: new Date().toISOString() })
     .eq("id", parsed.data.requestId);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("service_requests.update_status", error, {
+      fallbackError: "Could not update service request",
+      locale,
+      metadata: { requestId: parsed.data.requestId, status: parsed.data.status },
+    });
   }
   revalidatePath(`/${locale}/dashboard/services`);
   revalidatePath(`/${locale}/board/services`);
@@ -90,7 +99,12 @@ export async function createServiceRequest(
     preferred_at: parsed.data.preferred_at ?? null,
   });
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("service_requests.create", error, {
+      fallbackError: "Could not create service request",
+      locale,
+      userId,
+      metadata: { serviceTypeId: parsed.data.service_type_id },
+    });
   }
   revalidatePath(`/${locale}/dashboard/services`);
   return { ok: true as const };

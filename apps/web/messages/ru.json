@@ -142,6 +142,8 @@
     "selectTypeError": "Выберите тип",
     "submitted": "Заявка отправлена",
     "submitError": "Не удалось создать заявку",
+    "serviceUnavailable": "Сервис временно недоступен. Попробуйте ещё раз чуть позже.",
+    "errorWithReference": "{message} Код: {referenceId}",
     "noRequests": "Пока нет заявок",
     "noRequestsDesc": "Здесь появятся ваши заявки",
     "noPending": "Нет ожидающих заявок",

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function addVehicle(locale: string, formData: FormData) {
   const { user } = await getProfile();
@@ -26,7 +27,14 @@ export async function addVehicle(locale: string, formData: FormData) {
     valid_until: is_temporary && valid_until ? new Date(valid_until).toISOString() : null,
   });
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error) {
+    return createActionFailure("parking.vehicle.create", error, {
+      fallbackError: "Could not add vehicle",
+      locale,
+      userId: user.id,
+      metadata: { plateNumber: plate_number, isTemporary: is_temporary },
+    });
+  }
 
   revalidatePath(`/${locale}/dashboard/parking`);
   revalidatePath(`/${locale}/board/parking`);
@@ -44,7 +52,14 @@ export async function removeVehicle(locale: string, id: string) {
     .eq("id", id)
     .eq("user_id", user.id);
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error) {
+    return createActionFailure("parking.vehicle.remove", error, {
+      fallbackError: "Could not remove vehicle",
+      locale,
+      userId: user.id,
+      metadata: { vehicleId: id },
+    });
+  }
 
   revalidatePath(`/${locale}/dashboard/parking`);
   revalidatePath(`/${locale}/board/parking`);
