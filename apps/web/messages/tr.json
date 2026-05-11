@@ -142,6 +142,8 @@
     "selectTypeError": "Bir tür seçin",
     "submitted": "Talep gönderildi",
     "submitError": "Talep oluşturulamadı",
+    "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen kısa süre sonra tekrar deneyin.",
+    "errorWithReference": "{message} Referans: {referenceId}",
     "noRequests": "Henüz talep yok",
     "noRequestsDesc": "Hizmet talepleriniz burada görünecek",
     "noPending": "Bekleyen talep yok",

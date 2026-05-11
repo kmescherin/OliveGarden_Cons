@@ -19,6 +19,11 @@ import {
 import { toast } from "sonner";
 import { PhotoUpload } from "./photo-upload";
 import { localizeServiceTypeName } from "./service-type-i18n";
+import {
+  createErrorReference,
+  logActionError,
+  normalizeAppError,
+} from "@/lib/error-management";
 
 export function ServiceRequestForm({
   serviceTypes,
@@ -66,7 +71,11 @@ export function ServiceRequestForm({
       .single();
     if (error || !inserted) {
       setLoading(false);
-      toast.error(error?.message ?? t("submitError"));
+      const failure = normalizeClientFailure(
+        error ?? new Error("Service request insert returned no row"),
+        user.id,
+      );
+      toast.error(failure);
       return;
     }
     const photoPaths: string[] = [];
@@ -91,6 +100,30 @@ export function ServiceRequestForm({
     setPreferredAt("");
     setPhotos([]);
     router.refresh();
+  }
+
+  function normalizeClientFailure(error: unknown, userId: string) {
+    const referenceId = createErrorReference("service_request");
+    const normalized = normalizeAppError(error, {
+      fallbackMessage: t("submitError"),
+      referenceId,
+    });
+    logActionError(
+      {
+        action: "service_requests.client_create",
+        referenceId,
+        userId,
+        metadata: { serviceTypeId: typeId, photoCount: photos.length },
+      },
+      error,
+    );
+    return t("errorWithReference", {
+      message:
+        normalized.code === "service_unavailable"
+          ? t("serviceUnavailable")
+          : normalized.safeMessage,
+      referenceId,
+    });
   }
 
   return (

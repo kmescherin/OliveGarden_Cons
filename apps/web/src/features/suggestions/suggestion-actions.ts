@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, RATE_LIMITS, rateLimitedResponse } from "@/lib/rate-limit";
 import { suggestionSchema, updateSuggestionStatusSchema } from "@/lib/validations";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function submitSuggestion(
   locale: string,
@@ -32,7 +33,11 @@ export async function submitSuggestion(
     body: parsed.data.body || null,
   });
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("suggestions.create", error, {
+      fallbackError: "Could not submit suggestion",
+      locale,
+      userId: user.id,
+    });
   }
   revalidatePath(`/${locale}/dashboard/suggestions`);
   return { ok: true as const };
@@ -59,7 +64,11 @@ export async function updateSuggestionStatus(
     })
     .eq("id", parsed.data.id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("suggestions.update_status", error, {
+      fallbackError: "Could not update suggestion",
+      locale,
+      metadata: { suggestionId: parsed.data.id, status: parsed.data.status },
+    });
   }
   revalidatePath(`/${locale}/dashboard/suggestions`);
   revalidatePath(`/${locale}/board/suggestions`);

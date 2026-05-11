@@ -74,3 +74,38 @@ test("sanitizes diagnostics so credentials and full email addresses are not logg
   assert.match(serialized, /auth\.register/);
   assert.match(serialized, /err_test_456/);
 });
+
+test("creates safe server action failures with logged diagnostics", () => {
+  const loggerCalls = [];
+  const result = errorManagement.createActionFailure(
+    "service_request.create",
+    {
+      message: 'duplicate key value violates unique constraint for resident@example.com password="secret"',
+      code: "23505",
+    },
+    {
+      fallbackError: "Could not create request",
+      referenceId: "err_action_789",
+      metadata: {
+        email: "resident@example.com",
+        password: "secret",
+      },
+      logger: {
+        error: (...args) => loggerCalls.push(args),
+      },
+    },
+  );
+
+  assert.deepEqual(result, {
+    ok: false,
+    error: "Could not create request. Reference: err_action_789",
+    referenceId: "err_action_789",
+  });
+
+  const serialized = JSON.stringify(loggerCalls);
+  assert.match(serialized, /service_request\.create/);
+  assert.match(serialized, /err_action_789/);
+  assert.match(serialized, /23505/);
+  assert.doesNotMatch(serialized, /resident@example\.com/);
+  assert.doesNotMatch(serialized, /secret/);
+});

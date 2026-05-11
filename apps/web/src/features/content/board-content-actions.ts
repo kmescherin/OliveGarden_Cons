@@ -9,6 +9,7 @@ import {
   deleteByIdSchema,
   boardMemberSchema,
 } from "@/lib/validations";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function upsertContentPage(values: {
   slug: string;
@@ -33,7 +34,10 @@ export async function upsertContentPage(values: {
     { onConflict: "slug" },
   );
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.pages.upsert", error, {
+      fallbackError: "Could not save content page",
+      metadata: { slug: parsed.data.slug, visibility: parsed.data.visibility },
+    });
   }
   revalidatePath("/info");
   revalidatePath("/board/content");
@@ -63,7 +67,10 @@ export async function upsertSocialZone(values: {
     ? await supabase.from("social_zones").update(row).eq("id", parsed.data.id)
     : await supabase.from("social_zones").insert(row);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.social_zones.upsert", error, {
+      fallbackError: "Could not save social zone",
+      metadata: { socialZoneId: parsed.data.id },
+    });
   }
   revalidatePath("/info/zones");
   revalidatePath("/board/content");
@@ -91,7 +98,10 @@ export async function upsertAnnouncement(values: {
     ? await supabase.from("announcements").update(row).eq("id", parsed.data.id)
     : await supabase.from("announcements").insert(row);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.announcements.upsert", error, {
+      fallbackError: "Could not save announcement",
+      metadata: { announcementId: parsed.data.id, visibility: parsed.data.visibility },
+    });
   }
   revalidatePath("/info/announcements");
   revalidatePath("/board/content");
@@ -118,7 +128,10 @@ export async function deleteAnnouncement(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("announcements").delete().eq("id", parsed.data.id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.announcements.delete", error, {
+      fallbackError: "Could not delete announcement",
+      metadata: { announcementId: parsed.data.id },
+    });
   }
   revalidatePath("/info/announcements");
   revalidatePath("/board/content");
@@ -150,7 +163,10 @@ export async function upsertBoardMember(values: {
     ? await supabase.from("board_members").update(row).eq("id", parsed.data.id)
     : await supabase.from("board_members").insert(row);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.board_members.upsert", error, {
+      fallbackError: "Could not save board member",
+      metadata: { boardMemberId: parsed.data.id },
+    });
   }
   revalidatePath("/info/board");
   revalidatePath("/board/content");
@@ -166,7 +182,10 @@ export async function deleteBoardMember(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("board_members").delete().eq("id", parsed.data.id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("content.board_members.delete", error, {
+      fallbackError: "Could not delete board member",
+      metadata: { boardMemberId: parsed.data.id },
+    });
   }
   revalidatePath("/info/board");
   revalidatePath("/board/content");

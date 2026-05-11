@@ -17,7 +17,7 @@ export default function Error({
     <div className="flex flex-col items-center justify-center gap-4 py-20">
       <h2 className="text-xl font-semibold">Something went wrong</h2>
       <p className="text-muted-foreground">
-        {error.message || "An unexpected error occurred"}
+        An unexpected error occurred. Please try again.
       </p>
       <button
         onClick={reset}

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
+import { createActionFailure } from "@/lib/error-management";
 
 export async function saveServiceType(
   locale: string,
@@ -34,7 +35,11 @@ export async function saveServiceType(
     : await supabase.from("service_types").insert(row);
 
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("service_types.save", error, {
+      fallbackError: "Could not save request type",
+      locale,
+      metadata: { serviceTypeId: id, key },
+    });
   }
 
   revalidatePath(`/${locale}/board/content`);
@@ -51,7 +56,11 @@ export async function deleteServiceType(locale: string, id: string) {
   const supabase = createAdminClient();
   const { error } = await supabase.from("service_types").delete().eq("id", id);
   if (error) {
-    return { ok: false as const, error: error.message };
+    return createActionFailure("service_types.delete", error, {
+      fallbackError: "Could not delete request type",
+      locale,
+      metadata: { serviceTypeId: id },
+    });
   }
 
   revalidatePath(`/${locale}/board/content`);

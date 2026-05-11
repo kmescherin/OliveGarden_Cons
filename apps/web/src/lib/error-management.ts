@@ -28,6 +28,15 @@ type ActionLogContext = {
   metadata?: Record<string, unknown>;
 };
 
+type ActionFailureOptions = {
+  fallbackError: string;
+  referenceId?: string;
+  locale?: string;
+  userId?: string;
+  metadata?: Record<string, unknown>;
+  logger?: Logger;
+};
+
 const SERVICE_UNAVAILABLE_MESSAGE =
   "The service is temporarily unavailable. Please try again shortly.";
 
@@ -72,6 +81,31 @@ export function logActionError(
     ...sanitizeObject(context),
     diagnosticMessage: sanitizeText(errorToDiagnostic(error)),
   });
+}
+
+export function createActionFailure(
+  action: string,
+  error: unknown,
+  options: ActionFailureOptions,
+) {
+  const referenceId = options.referenceId ?? createErrorReference("action");
+  logActionError(
+    {
+      action,
+      referenceId,
+      locale: options.locale,
+      userId: options.userId,
+      metadata: options.metadata,
+    },
+    error,
+    options.logger,
+  );
+
+  return {
+    ok: false as const,
+    error: `${options.fallbackError}. Reference: ${referenceId}`,
+    referenceId,
+  };
 }
 
 function classifyError(error: unknown, diagnosticMessage: string): AppErrorCode {
@@ -160,7 +194,9 @@ function sanitizeObject(value: Record<string, unknown>): Record<string, unknown>
 function sanitizeValue(value: unknown): unknown {
   if (typeof value === "string") {
     return value
+      .replace(/password=\\?"[^"]+\\?"/gi, "credential=[redacted]")
       .replace(/password=([^,\s}"']+)/gi, "credential=[redacted]")
+      .replace(/password\\?":\\?"[^"]+"/gi, 'credential":"[redacted]"')
       .replace(EMAIL_PATTERN, maskEmail);
   }
 
