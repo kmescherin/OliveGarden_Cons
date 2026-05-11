@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/profile";
 import { VehicleForm } from "@/features/parking/vehicle-form";
@@ -17,26 +18,32 @@ export default async function ParkingPage({ params }: Props) {
   const t = await getTranslations("Vehicles");
   const tgp = await getTranslations("GuestPasses");
   const tkf = await getTranslations("KeyFobs");
-  const { user } = await getProfile();
+  const { user, profile } = await getProfile();
+  if (!user) {
+    redirect(`/${locale}/login`);
+  }
+  if (profile?.approval_status === "pending" || profile?.approval_status === "rejected") {
+    redirect(`/${locale}/pending`);
+  }
   const supabase = await createClient();
 
   const [vehiclesRes, passesRes, keysRes] = await Promise.all([
     supabase
       .from("vehicles")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .neq("status", "removed")
       .order("created_at", { ascending: false }),
     supabase
       .from("guest_passes")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .neq("status", "cancelled")
       .order("created_at", { ascending: false }),
     supabase
       .from("key_fobs")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
   ]);
 
