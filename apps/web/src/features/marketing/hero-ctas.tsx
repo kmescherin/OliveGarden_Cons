@@ -11,8 +11,8 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   if (loggedIn) {
     return (
       <ShimmerButton
-        background="#5266eb"
-        shimmerColor="#cdddff"
+        background="var(--color-mercury-blue)"
+        shimmerColor="var(--color-ghost-blue)"
         className="rounded-full px-6 text-primary-foreground"
         onClick={() => router.push("/dashboard")}
       >
@@ -24,8 +24,8 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   return (
     <>
       <ShimmerButton
-        background="#5266eb"
-        shimmerColor="#cdddff"
+        background="var(--color-mercury-blue)"
+        shimmerColor="var(--color-ghost-blue)"
         className="rounded-full px-6 text-primary-foreground"
         onClick={() => router.push("/login")}
       >
@@ -33,7 +33,7 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
       </ShimmerButton>
       <ShimmerButton
         background="rgb(205 221 255 / 0.16)"
-        shimmerColor="#cdddff"
+        shimmerColor="var(--color-ghost-blue)"
         className="rounded-full border border-border px-6 text-foreground"
         onClick={() => router.push("/register")}
       >
