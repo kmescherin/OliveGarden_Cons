@@ -8,13 +8,12 @@ export async function AdminNav() {
 
   const t = await getTranslations("Admin");
 
-  const linkClass =
-    "text-muted-foreground hover:text-foreground underline-offset-4 hover:underline";
+  const linkClass = "dashboard-nav-link";
 
   return (
-    <div className="border-b bg-muted/40">
+    <div className="border-b border-border bg-background/42 backdrop-blur">
       <nav
-        className="container flex flex-wrap gap-x-4 gap-y-2 py-3 text-sm font-medium"
+        className="dashboard-nav"
         aria-label={t("navAria")}
       >
         {flags.admin && (

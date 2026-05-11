@@ -21,22 +21,28 @@ export default async function ServicesPage({ params }: Props) {
 
   return (
     <Suspense fallback={<FormSkeleton />}>
-      <div className="space-y-10">
-        <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="dashboard-page">
+        <div className="dashboard-hero">
+          <h1 className="dashboard-title">{t("title")}</h1>
+        </div>
         <div className="grid gap-8 lg:grid-cols-2">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <ClipboardPlus className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-xl font-medium">{t("new")}</h2>
+          <div className="dashboard-section">
+            <div className="dashboard-section-title">
+              <ClipboardPlus />
+              <h2>{t("new")}</h2>
             </div>
-            <ServiceRequestForm serviceTypes={types ?? []} />
+            <div className="dashboard-panel">
+              <ServiceRequestForm serviceTypes={types ?? []} />
+            </div>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-xl font-medium">{t("myRequests")}</h2>
+          <div className="dashboard-section">
+            <div className="dashboard-section-title">
+              <ListChecks />
+              <h2>{t("myRequests")}</h2>
             </div>
-            <ServiceRequestsList />
+            <div className="dashboard-panel">
+              <ServiceRequestsList />
+            </div>
           </div>
         </div>
       </div>

@@ -83,12 +83,12 @@ export function SiteHeaderClient({
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/78 backdrop-blur-xl">
-      <div className="public-shell flex h-16 items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/72 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="app-shell flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-2">
           <Link
             href="/"
-            className="shrink-0 text-sm font-medium tracking-[0.02em] text-foreground"
+            className="font-heading shrink-0 text-xl font-semibold tracking-[0.02em] text-foreground"
           >
             {t("home")}
           </Link>

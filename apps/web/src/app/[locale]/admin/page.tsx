@@ -37,10 +37,12 @@ export default async function AdminHomePage({ params }: Props) {
   ];
 
   return (
-    <main className="container flex-1 py-10">
+    <div className="dashboard-page">
       <Suspense fallback={<CardGridSkeleton count={4} />}>
-        <h1 className="mb-2 text-3xl font-semibold">{t("title")}</h1>
-        <p className="text-muted-foreground mb-8 max-w-2xl text-sm">{t("intro")}</p>
+        <div className="dashboard-hero">
+          <h1 className="dashboard-title">{t("title")}</h1>
+          <p className="dashboard-lead">{t("intro")}</p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((c) => (
             <Link key={c.href} href={c.href} className="block transition-opacity hover:opacity-90">
@@ -54,6 +56,6 @@ export default async function AdminHomePage({ params }: Props) {
           ))}
         </div>
       </Suspense>
-    </main>
+    </div>
   );
 }

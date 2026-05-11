@@ -25,7 +25,7 @@ export default async function AdminLayout({ children, params }: Props) {
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
       <AdminNav />
-      {children}
+      <div className="app-main">{children}</div>
     </div>
   );
 }

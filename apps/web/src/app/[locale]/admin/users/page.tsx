@@ -24,11 +24,15 @@ export default async function AdminUsersPage({ params }: Props) {
   const rows = await loadAdminUsersForPage();
 
   return (
-    <main className="container flex-1 py-10">
-      <h1 className="mb-6 text-3xl font-semibold">{t("usersTitle")}</h1>
+    <div className="dashboard-page">
+      <div className="dashboard-hero">
+        <h1 className="dashboard-title">{t("usersTitle")}</h1>
+      </div>
       <Suspense fallback={<TableSkeleton />}>
-        <AdminUsersTable rows={rows} />
+        <div className="dashboard-panel overflow-x-auto">
+          <AdminUsersTable rows={rows} />
+        </div>
       </Suspense>
-    </main>
+    </div>
   );
 }

@@ -4,8 +4,6 @@ import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { getProfile } from "@/lib/profile";
 import { SiteHeader } from "@/components/site-header";
-import { buttonVariants } from "@/components/ui/button-variants";
-import { cn } from "@/lib/utils";
 
 type Props = {
   children: React.ReactNode;
@@ -31,59 +29,59 @@ export default async function DashboardLayout({ children, params }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
-      <div className="border-b bg-muted/30">
-        <div className="container flex flex-wrap gap-2 py-3">
+      <div className="border-b border-border bg-background/42 backdrop-blur">
+        <div className="dashboard-nav">
           <Link
             href="/dashboard"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("dashboard")}
           </Link>
           <Link
             href="/profile"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("profile")}
           </Link>
           <Link
             href="/dashboard/services"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("services")}
           </Link>
           <Link
             href="/dashboard/parking"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("parking")}
           </Link>
           <Link
             href="/dashboard/chat"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("chat")}
           </Link>
           <Link
             href="/dashboard/suggestions"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("suggestions")}
           </Link>
           <Link
             href="/dashboard/notifications"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("notifications")}
           </Link>
           <Link
             href="/info/rules"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            className="dashboard-nav-link"
           >
             {t("home")}
           </Link>
         </div>
       </div>
-      <div className="container flex-1 py-8">{children}</div>
+      <div className="app-main">{children}</div>
     </div>
   );
 }

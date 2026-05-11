@@ -49,28 +49,36 @@ export default async function ParkingPage({ params }: Props) {
 
   return (
     <Suspense fallback={<FormSkeleton />}>
-      <div className="space-y-10">
-        <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Car className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-medium">{t("title")}</h2>
-          </div>
-          <VehicleForm vehicles={vehiclesRes.data ?? []} locale={locale} />
+      <div className="dashboard-page">
+        <div className="dashboard-hero">
+          <h1 className="dashboard-title">{t("title")}</h1>
         </div>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Ticket className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-medium">{tgp("title")}</h2>
+        <div className="dashboard-section">
+          <div className="dashboard-section-title">
+            <Car />
+            <h2>{t("title")}</h2>
           </div>
-          <GuestPassForm passes={passesRes.data ?? []} locale={locale} />
+          <div className="dashboard-panel">
+            <VehicleForm vehicles={vehiclesRes.data ?? []} locale={locale} />
+          </div>
         </div>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Key className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-medium">{tkf("title")}</h2>
+        <div className="dashboard-section">
+          <div className="dashboard-section-title">
+            <Ticket />
+            <h2>{tgp("title")}</h2>
           </div>
-          <KeyFobList keys={keysRes.data ?? []} />
+          <div className="dashboard-panel">
+            <GuestPassForm passes={passesRes.data ?? []} locale={locale} />
+          </div>
+        </div>
+        <div className="dashboard-section">
+          <div className="dashboard-section-title">
+            <Key />
+            <h2>{tkf("title")}</h2>
+          </div>
+          <div className="dashboard-panel">
+            <KeyFobList keys={keysRes.data ?? []} />
+          </div>
         </div>
       </div>
     </Suspense>

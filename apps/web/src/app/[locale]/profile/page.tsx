@@ -36,10 +36,10 @@ export default async function ProfilePage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
-      <main className="container flex-1 py-10">
-        <Card className="mx-auto max-w-lg">
+      <main className="app-main">
+        <Card className="dashboard-panel mx-auto max-w-2xl">
           <CardHeader>
-            <CardTitle>{t("title")}</CardTitle>
+            <CardTitle className="font-heading text-3xl font-semibold">{t("title")}</CardTitle>
             <CardDescription>{t("description")}</CardDescription>
           </CardHeader>
           <CardContent>
