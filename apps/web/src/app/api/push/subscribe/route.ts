@@ -19,6 +19,10 @@ export async function POST(req: Request) {
   }
 
   const admin = createAdminClient();
+  // Conflict target is (user_id, endpoint) — see migration
+  // 20260428000000_push_subscriptions_unique_user_endpoint.sql.
+  // Upserting on endpoint alone would let user B silently overwrite
+  // user A's row for a shared device endpoint.
   const { error } = await admin.from("push_subscriptions").upsert(
     {
       user_id: user.id,
@@ -26,7 +30,7 @@ export async function POST(req: Request) {
       p256dh: keys.p256dh,
       auth_key: keys.auth,
     },
-    { onConflict: "endpoint" },
+    { onConflict: "user_id,endpoint" },
   );
 
   if (error) {

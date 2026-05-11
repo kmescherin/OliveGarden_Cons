@@ -20,3 +20,9 @@ FEATURES.pdf
 FEATURES_extracted.json
 deploy/supabase/.env
 deploy/nginx/ssl/*.pem
+
+# Local agent/design verification artifacts
+.superpowers/
+artifacts/
+proofshot-artifacts/
+Issues/

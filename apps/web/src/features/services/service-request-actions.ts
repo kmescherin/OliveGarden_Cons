@@ -6,6 +6,7 @@ import { serviceRequestSchema, updateServiceStatusSchema } from "@/lib/validatio
 import { checkRateLimit, RATE_LIMITS, rateLimitedResponse } from "@/lib/rate-limit";
 import { getStaffFlags } from "@/lib/profile";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit } from "@/lib/audit";
 
 export async function updateServiceRequestStatus(
   locale: string,
@@ -44,6 +45,8 @@ export async function updateServiceRequestStatus(
     return { ok: false as const, error: "invalid_transition" };
   }
 
+  const previousStatus = current?.status ?? null;
+
   const { error } = await supabase
     .from("service_requests")
     .update({ status: parsed.data.status, updated_at: new Date().toISOString() })
@@ -55,6 +58,14 @@ export async function updateServiceRequestStatus(
       metadata: { requestId: parsed.data.requestId, status: parsed.data.status },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "service_request_status_changed",
+    entityType: "service_request",
+    entityId: parsed.data.requestId,
+    payload: { from: previousStatus, to: parsed.data.status },
+  });
+
   revalidatePath(`/${locale}/dashboard/services`);
   revalidatePath(`/${locale}/board/services`);
 

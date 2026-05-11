@@ -10,6 +10,7 @@ import {
   boardMemberSchema,
 } from "@/lib/validations";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit } from "@/lib/audit";
 
 export async function upsertContentPage(values: {
   slug: string;
@@ -39,6 +40,14 @@ export async function upsertContentPage(values: {
       metadata: { slug: parsed.data.slug, visibility: parsed.data.visibility },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "content_page_upserted",
+    entityType: "content_page",
+    entityId: parsed.data.slug,
+    payload: { slug: parsed.data.slug, title: parsed.data.title, visibility: parsed.data.visibility },
+  });
+
   revalidatePath("/info");
   revalidatePath("/board/content");
   return { ok: true as const };
@@ -72,6 +81,14 @@ export async function upsertSocialZone(values: {
       metadata: { socialZoneId: parsed.data.id },
     });
   }
+
+  await recordAudit(supabase, {
+    action: parsed.data.id ? "social_zone_updated" : "social_zone_created",
+    entityType: "social_zone",
+    entityId: parsed.data.id ?? null,
+    payload: { name: parsed.data.name },
+  });
+
   revalidatePath("/info/zones");
   revalidatePath("/board/content");
   return { ok: true as const };
@@ -103,6 +120,14 @@ export async function upsertAnnouncement(values: {
       metadata: { announcementId: parsed.data.id, visibility: parsed.data.visibility },
     });
   }
+
+  await recordAudit(supabase, {
+    action: parsed.data.id ? "announcement_updated" : "announcement_created",
+    entityType: "announcement",
+    entityId: parsed.data.id ?? null,
+    payload: { title: parsed.data.title, visibility: parsed.data.visibility },
+  });
+
   revalidatePath("/info/announcements");
   revalidatePath("/board/content");
 
@@ -133,6 +158,13 @@ export async function deleteAnnouncement(id: string) {
       metadata: { announcementId: parsed.data.id },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "announcement_deleted",
+    entityType: "announcement",
+    entityId: parsed.data.id,
+  });
+
   revalidatePath("/info/announcements");
   revalidatePath("/board/content");
   return { ok: true as const };
@@ -168,6 +200,14 @@ export async function upsertBoardMember(values: {
       metadata: { boardMemberId: parsed.data.id },
     });
   }
+
+  await recordAudit(supabase, {
+    action: parsed.data.id ? "board_member_updated" : "board_member_created",
+    entityType: "board_member",
+    entityId: parsed.data.id ?? null,
+    payload: { full_name: parsed.data.full_name, role_title: parsed.data.role_title },
+  });
+
   revalidatePath("/info/board");
   revalidatePath("/board/content");
   return { ok: true as const };
@@ -187,6 +227,13 @@ export async function deleteBoardMember(id: string) {
       metadata: { boardMemberId: parsed.data.id },
     });
   }
+
+  await recordAudit(supabase, {
+    action: "board_member_deleted",
+    entityType: "board_member",
+    entityId: parsed.data.id,
+  });
+
   revalidatePath("/info/board");
   revalidatePath("/board/content");
   return { ok: true as const };

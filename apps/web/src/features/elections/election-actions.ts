@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
 import { createActionFailure } from "@/lib/error-management";
+import { recordAudit, currentUserId } from "@/lib/audit";
 
 export async function saveCandidate(
   locale: string,
@@ -43,6 +44,14 @@ export async function saveCandidate(
     });
   }
 
+  await recordAudit(admin, {
+    action: id ? "election_candidate_updated" : "election_candidate_created",
+    entityType: "election_candidate",
+    entityId: id,
+    payload: { full_name, election_year: row.election_year },
+    actorId: await currentUserId(),
+  });
+
   revalidatePath(`/${locale}/info/elections`);
   revalidatePath(`/${locale}/board/content`);
   return { ok: true as const };
@@ -63,6 +72,13 @@ export async function deleteCandidate(locale: string, id: string) {
       metadata: { candidateId: id },
     });
   }
+
+  await recordAudit(admin, {
+    action: "election_candidate_deleted",
+    entityType: "election_candidate",
+    entityId: id,
+    actorId: await currentUserId(),
+  });
 
   revalidatePath(`/${locale}/info/elections`);
   revalidatePath(`/${locale}/board/content`);
