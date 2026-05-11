@@ -11,9 +11,9 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   if (loggedIn) {
     return (
       <ShimmerButton
-        background="var(--color-mercury-blue)"
-        shimmerColor="var(--color-ghost-blue)"
-        className="rounded-full px-6 text-primary-foreground"
+        background="linear-gradient(135deg, var(--color-garden-gold), #b88735)"
+        shimmerColor="rgb(243 239 228 / 0.88)"
+        className="rounded-full px-6 font-medium text-primary-foreground shadow-lg shadow-primary/15"
         onClick={() => router.push("/dashboard")}
       >
         {t("ctaDashboard")}
@@ -24,17 +24,17 @@ export function HeroCtas({ loggedIn }: { loggedIn: boolean }) {
   return (
     <>
       <ShimmerButton
-        background="var(--color-mercury-blue)"
-        shimmerColor="var(--color-ghost-blue)"
-        className="rounded-full px-6 text-primary-foreground"
+        background="linear-gradient(135deg, var(--color-garden-gold), #b88735)"
+        shimmerColor="rgb(243 239 228 / 0.88)"
+        className="rounded-full px-6 font-medium text-primary-foreground shadow-lg shadow-primary/15"
         onClick={() => router.push("/login")}
       >
         {t("ctaLogin")}
       </ShimmerButton>
       <ShimmerButton
-        background="rgb(205 221 255 / 0.16)"
-        shimmerColor="var(--color-ghost-blue)"
-        className="rounded-full border border-border px-6 text-foreground"
+        background="rgb(32 51 41 / 0.78)"
+        shimmerColor="rgb(210 168 90 / 0.82)"
+        className="rounded-full border border-border px-6 font-medium text-foreground shadow-lg shadow-black/10"
         onClick={() => router.push("/register")}
       >
         {t("ctaRegister")}

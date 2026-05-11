@@ -27,7 +27,7 @@ export default async function ContactsPage({ params }: Props) {
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
       <main className="public-shell flex-1 py-16 md:py-24">
-        <div className="max-w-4xl">
+        <div className="public-hero max-w-4xl">
           <h1 className="public-heading">{t("title")}</h1>
           <p className="public-lead mt-6">{t("lead")}</p>
         </div>

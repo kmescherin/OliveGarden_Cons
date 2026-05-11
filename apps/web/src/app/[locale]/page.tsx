@@ -27,10 +27,10 @@ export default async function HomePage({ params }: Props) {
     <div className="flex min-h-screen flex-col">
       <SiteHeader user={user} />
       <main className="flex flex-1 flex-col">
-        <section className="public-shell flex min-h-[calc(100svh-4rem)] items-center py-16 text-center">
-          <div className="mx-auto w-full min-w-0 max-w-4xl">
+        <section className="public-shell flex py-10 text-center sm:py-14 md:min-h-[calc(100svh-4rem)] md:items-center md:py-16">
+          <div className="public-hero mx-auto w-full min-w-0 max-w-5xl">
             <p className="public-kicker mb-5">{t("badge")}</p>
-            <h1 className="mx-auto max-w-[11ch] text-4xl leading-[1.05] font-light tracking-[0.01em] text-foreground sm:max-w-none sm:text-5xl md:text-7xl">
+            <h1 className="font-heading mx-auto max-w-[11ch] text-5xl leading-[0.95] font-semibold tracking-[0.01em] text-foreground sm:max-w-none sm:text-6xl md:text-7xl">
               {t("title")}
             </h1>
             <p className="mx-auto mt-6 max-w-[30ch] text-lg leading-8 text-muted-foreground sm:max-w-2xl md:text-xl">
@@ -53,7 +53,7 @@ export default async function HomePage({ params }: Props) {
 
           <div className="grid gap-0 md:grid-cols-3">
             <article className="public-panel md:border-r-0">
-              <h3 className="text-2xl font-light tracking-[0.01em]">
+              <h3 className="public-card-title">
                 {t("f1Title")}
               </h3>
               <p className="mt-4 leading-7 text-muted-foreground">
@@ -61,7 +61,7 @@ export default async function HomePage({ params }: Props) {
               </p>
             </article>
             <article className="public-panel md:border-r-0">
-              <h3 className="text-2xl font-light tracking-[0.01em]">
+              <h3 className="public-card-title">
                 {t("f2Title")}
               </h3>
               <p className="mt-4 leading-7 text-muted-foreground">
@@ -69,7 +69,7 @@ export default async function HomePage({ params }: Props) {
               </p>
             </article>
             <article className="public-panel">
-              <h3 className="text-2xl font-light tracking-[0.01em]">
+              <h3 className="public-card-title">
                 {t("f3Title")}
               </h3>
               <p className="mt-4 leading-7 text-muted-foreground">

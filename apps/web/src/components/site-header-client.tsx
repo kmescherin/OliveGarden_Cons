@@ -99,6 +99,7 @@ export function SiteHeaderClient({
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
+              id="site-mobile-menu-trigger"
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
                 "shrink-0 border border-border md:hidden",
