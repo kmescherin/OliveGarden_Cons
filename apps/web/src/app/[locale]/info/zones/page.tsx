@@ -24,12 +24,12 @@ export default async function ZonesPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton count={4} />}>
-      <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">{t("zones")}</h1>
+      <div className="space-y-10">
+      <h1 className="public-heading">{t("zones")}</h1>
       <ul className="grid gap-4 md:grid-cols-2">
         {(zones ?? []).map((z) => (
           <li key={z.id}>
-            <Card>
+            <Card className="public-panel">
               <CardHeader>
                 <CardTitle>{z.name}</CardTitle>
               </CardHeader>

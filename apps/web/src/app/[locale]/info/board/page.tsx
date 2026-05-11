@@ -26,15 +26,15 @@ export default async function BoardPage({ params }: Props) {
 
   return (
     <Suspense fallback={<CardGridSkeleton count={4} />}>
-      <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">{t("board")}</h1>
+      <div className="space-y-10">
+      <h1 className="public-heading">{t("board")}</h1>
       {(members ?? []).length === 0 ? (
         <p className="text-sm text-muted-foreground">—</p>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {(members ?? []).map((m) => (
             <li key={m.id}>
-              <Card>
+              <Card className="public-panel">
                 <CardHeader>
                   <CardTitle>{m.full_name}</CardTitle>
                   {m.role_title && (
@@ -47,7 +47,7 @@ export default async function BoardPage({ params }: Props) {
                       <Phone className="h-4 w-4" />
                       <a
                         href={`tel:${m.phone}`}
-                        className="hover:text-foreground"
+                        className="public-link"
                       >
                         {m.phone}
                       </a>
@@ -58,7 +58,7 @@ export default async function BoardPage({ params }: Props) {
                       <Mail className="h-4 w-4" />
                       <a
                         href={`mailto:${m.email}`}
-                        className="hover:text-foreground"
+                        className="public-link"
                       >
                         {m.email}
                       </a>
