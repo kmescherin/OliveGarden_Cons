@@ -27,7 +27,7 @@ export default async function ZonesPage({ params }: Props) {
       <div className="space-y-10">
       <h1 className="public-heading">{t("zones")}</h1>
       {(zones ?? []).length === 0 ? (
-        <p className="text-sm text-muted-foreground">No social areas listed yet.</p>
+        <p className="text-sm text-muted-foreground">{t("noZones")}</p>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {(zones ?? []).map((z) => (
