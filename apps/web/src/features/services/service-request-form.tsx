@@ -85,7 +85,19 @@ export function ServiceRequestForm({
       const { error: uploadErr } = await supabase.storage
         .from("service-photos")
         .upload(path, photos[i], { upsert: true });
-      if (!uploadErr) photoPaths.push(path);
+      if (uploadErr) {
+        logActionError(
+          {
+            action: "service_requests.photo_upload",
+            referenceId: createErrorReference("service_photo"),
+            userId: user.id,
+            metadata: { requestId: inserted.id, index: i },
+          },
+          uploadErr,
+        );
+      } else {
+        photoPaths.push(path);
+      }
     }
     if (photoPaths.length > 0) {
       await supabase

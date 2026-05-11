@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStaffFlags } from "@/lib/profile";
-import { createActionFailure } from "@/lib/error-management";
+import { createActionFailure, createApiFailure } from "@/lib/error-management";
 
 export const runtime = "nodejs";
 
@@ -102,8 +102,15 @@ export async function POST(req: Request) {
   });
 
   if (!embedRes.ok) {
+    const err = await embedRes.text();
     await admin.from("knowledge_documents").delete().eq("id", doc.id);
-    return NextResponse.json({ error: "Embedding failed" }, { status: 502 });
+    const failure = createApiFailure("api.rag.ingest.embedding", err, {
+      fallbackError: "Could not index document",
+      status: 502,
+      userId: user.id,
+      metadata: { documentId: doc.id, chunkCount: chunks.length },
+    });
+    return NextResponse.json(failure.body, { status: failure.status });
   }
 
   const embedJson = (await embedRes.json()) as {
