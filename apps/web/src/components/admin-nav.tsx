@@ -41,6 +41,9 @@ export async function AdminNav() {
         <Link href="/board/parking" className={linkClass}>
           {t("navParking")}
         </Link>
+        <Link href="/board/feedback" className={linkClass}>
+          {t("navFeedback")}
+        </Link>
       </nav>
     </div>
   );

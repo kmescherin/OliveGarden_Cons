@@ -42,6 +42,7 @@ export const RATE_LIMITS = {
   serviceRequest: { limit: 10, windowMs: 3_600_000 },
   suggestion: { limit: 5, windowMs: 3_600_000 },
   ragChat: { limit: 20, windowMs: 3_600_000 },
+  testerFeedback: { limit: 10, windowMs: 3_600_000 },
   apiDefault: { limit: 30, windowMs: 60_000 },
 } as const;
 

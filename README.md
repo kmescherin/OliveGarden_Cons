@@ -75,6 +75,17 @@
 
 Загрузка PDF/TXT документов через `/board/content` → чанкинг (800 символов, overlap 100) → эмбеддинги через OpenAI `text-embedding-3-small` → векторный поиск в Supabase. Чат возвращает ответ с источниками и цитатами.
 
+**LLM-провайдер:** при наличии `DEEPSEEK_API_KEY` ответ синтезируется через DeepSeek (`deepseek-v4-flash`, OpenAI-совместимый endpoint). При отсутствии — используется OpenAI (`gpt-4o-mini`). Эмбеддинги остаются на OpenAI; если `OPENAI_API_KEY` не задан, поиск переключается на keyword-fallback (`match_document_chunks_by_text`).
+
+### Обратная связь от пользователей и тестировщиков
+
+Отдельная форма для жалоб на ошибки, пожеланий и вопросов о самом приложении (не путать с `/dashboard/suggestions` — те предложения адресованы правлению о ЖК).
+
+- Жители: `/dashboard/feedback` — форма + история своих обращений с автозаполнением URL страницы и user-agent
+- Правление/админ: `/board/feedback` — инбокс со статусами (new / in_progress / resolved / wontfix), фильтрами по категории (bug / feature / question / other) и важности
+
+Таблица `public.tester_feedback` с RLS: автор видит свои, правление видит всё и меняет статус.
+
 ### Типы заявок
 
 Настраиваемый каталог: правление создаёт типы заявок (сантехника, электрика, уборка и т.д.) с ключами и сортировкой.
@@ -236,7 +247,10 @@ sudo systemctl daemon-reload && sudo systemctl enable --now olive-garden-web
 |---|---|
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Email-уведомления |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push |
-| `OPENAI_API_KEY` | RAG-эмбеддинги и чат |
+| `DEEPSEEK_API_KEY` | RAG-чат через DeepSeek (приоритет над OpenAI). Эндпоинт OpenAI-совместимый. |
+| `DEEPSEEK_BASE_URL` | По умолчанию `https://api.deepseek.com` |
+| `DEEPSEEK_MODEL` | По умолчанию `deepseek-v4-flash` |
+| `OPENAI_API_KEY` | Эмбеддинги RAG (`text-embedding-3-small`). Если не задан — fallback на keyword-поиск. Также может использоваться как LLM, если DEEPSEEK_API_KEY пустой. |
 
 ---
 

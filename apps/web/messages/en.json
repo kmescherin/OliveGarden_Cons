@@ -66,7 +66,8 @@
     "elections": "Elections",
     "parking": "Parking",
     "access": "Access",
-    "serviceTypes": "Request Types"
+    "serviceTypes": "Request Types",
+    "feedback": "Feedback"
   },
   "Auth": {
     "loginTitle": "Log in",
@@ -215,6 +216,7 @@
     "navServices": "Service queue",
     "navSuggestions": "Suggestions",
     "navParking": "Parking",
+    "navFeedback": "Feedback",
     "usersTitle": "Users & roles",
     "cardUsersTitle": "Users & roles",
     "cardUsersDesc": "Grant or revoke board and admin roles.",
@@ -412,5 +414,55 @@
     "disabled": "Push notifications disabled",
     "unsupported": "Push notifications are not supported in this browser",
     "permissionDenied": "Notification permission denied"
+  },
+  "TesterFeedback": {
+    "title": "Feedback & bug reports",
+    "intro": "Found an error, have a wish, or a question? Tell us — your reports help us improve the app.",
+    "newFeedback": "New feedback",
+    "myFeedback": "My feedback",
+    "category": "Category",
+    "severity": "Severity",
+    "fieldTitle": "Short summary",
+    "titlePlaceholder": "What happened? (one line)",
+    "description": "Details",
+    "descriptionPlaceholder": "Steps to reproduce, expected vs actual, suggestion details…",
+    "autoFields": "Will be attached: page URL ({url}) and your browser.",
+    "submit": "Send",
+    "sending": "Sending…",
+    "submitted": "Thanks — your feedback was sent.",
+    "titleRequired": "Please add a short summary.",
+    "emptyTitle": "No feedback yet",
+    "emptyDescription": "Your reports and wishes will appear here.",
+    "adminNote": "Reply",
+    "boardTitle": "Tester feedback",
+    "boardIntro": "Bug reports, feature wishes, and questions from users / testers.",
+    "boardEmptyTitle": "No feedback yet",
+    "boardEmptyDescription": "Reports submitted by users will appear here.",
+    "contextDetails": "Browser / page details",
+    "pageUrl": "Page",
+    "userAgent": "Browser",
+    "adminNotePlaceholder": "Reply to the user (optional)",
+    "markNew": "Mark new",
+    "markInProgress": "In progress",
+    "markResolved": "Resolved",
+    "markWontfix": "Won't fix",
+    "categories": {
+      "bug": "Bug",
+      "feature": "Feature request",
+      "question": "Question",
+      "other": "Other"
+    },
+    "severities": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "statuses": {
+      "new": "New",
+      "in_progress": "In progress",
+      "resolved": "Resolved",
+      "wontfix": "Won't fix"
+    }
   }
 }

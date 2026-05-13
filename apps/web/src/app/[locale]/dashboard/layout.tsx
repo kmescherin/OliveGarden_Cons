@@ -74,6 +74,12 @@ export default async function DashboardLayout({ children, params }: Props) {
             {t("notifications")}
           </Link>
           <Link
+            href="/dashboard/feedback"
+            className="dashboard-nav-link"
+          >
+            {t("feedback")}
+          </Link>
+          <Link
             href="/info/rules"
             className="dashboard-nav-link"
           >
