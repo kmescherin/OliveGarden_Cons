@@ -66,7 +66,8 @@
     "elections": "Seçimler",
     "parking": "Otopark",
     "access": "Erişim",
-    "serviceTypes": "Talep Türleri"
+    "serviceTypes": "Talep Türleri",
+    "feedback": "Geri Bildirim"
   },
   "Auth": {
     "loginTitle": "Giriş",
@@ -215,6 +216,7 @@
     "navServices": "Hizmet kuyruğu",
     "navSuggestions": "Öneriler",
     "navParking": "Otopark",
+    "navFeedback": "Geri Bildirim",
     "usersTitle": "Kullanıcılar ve roller",
     "cardUsersTitle": "Kullanıcılar ve roller",
     "cardUsersDesc": "Yönetim ve yönetici rollerini verin veya kaldırın.",
@@ -412,5 +414,55 @@
     "disabled": "Push bildirimleri devre dışı bırakıldı",
     "unsupported": "Bu tarayıcı push bildirimlerini desteklemiyor",
     "permissionDenied": "Bildirim izni reddedildi"
+  },
+  "TesterFeedback": {
+    "title": "Geri bildirim ve hata raporları",
+    "intro": "Bir hata, dilek veya soru mu var? Bize bildirin — uygulamayı geliştirmemize yardımcı olur.",
+    "newFeedback": "Yeni geri bildirim",
+    "myFeedback": "Geri bildirimlerim",
+    "category": "Kategori",
+    "severity": "Önem",
+    "fieldTitle": "Kısa özet",
+    "titlePlaceholder": "Ne oldu? (tek satır)",
+    "description": "Ayrıntılar",
+    "descriptionPlaceholder": "Tekrarlama adımları, beklenen / gerçekleşen, dilek ayrıntıları…",
+    "autoFields": "Eklenecekler: sayfa adresi ({url}) ve tarayıcınız.",
+    "submit": "Gönder",
+    "sending": "Gönderiliyor…",
+    "submitted": "Teşekkürler — geri bildiriminiz iletildi.",
+    "titleRequired": "Lütfen kısa bir özet ekleyin.",
+    "emptyTitle": "Henüz geri bildirim yok",
+    "emptyDescription": "Raporlarınız ve dilekleriniz burada görünür.",
+    "adminNote": "Yanıt",
+    "boardTitle": "Test kullanıcı geri bildirimleri",
+    "boardIntro": "Kullanıcı ve testçilerden hata raporları, özellik dilekleri ve sorular.",
+    "boardEmptyTitle": "Henüz geri bildirim yok",
+    "boardEmptyDescription": "Kullanıcıların gönderdiği raporlar burada görünür.",
+    "contextDetails": "Tarayıcı / sayfa ayrıntıları",
+    "pageUrl": "Sayfa",
+    "userAgent": "Tarayıcı",
+    "adminNotePlaceholder": "Kullanıcıya yanıt (isteğe bağlı)",
+    "markNew": "Yeni",
+    "markInProgress": "Devam ediyor",
+    "markResolved": "Çözüldü",
+    "markWontfix": "Çözülmeyecek",
+    "categories": {
+      "bug": "Hata",
+      "feature": "Özellik isteği",
+      "question": "Soru",
+      "other": "Diğer"
+    },
+    "severities": {
+      "low": "Düşük",
+      "normal": "Normal",
+      "high": "Yüksek",
+      "critical": "Kritik"
+    },
+    "statuses": {
+      "new": "Yeni",
+      "in_progress": "Devam ediyor",
+      "resolved": "Çözüldü",
+      "wontfix": "Çözülmeyecek"
+    }
   }
 }

@@ -181,3 +181,26 @@ export type PushSubscription = {
   auth_key: string;
   created_at: string;
 };
+
+export type TesterFeedbackCategory = "bug" | "feature" | "question" | "other";
+export type TesterFeedbackSeverity = "low" | "normal" | "high" | "critical";
+export type TesterFeedbackStatus =
+  | "new"
+  | "in_progress"
+  | "resolved"
+  | "wontfix";
+
+export type TesterFeedback = {
+  id: string;
+  user_id: string;
+  category: TesterFeedbackCategory;
+  severity: TesterFeedbackSeverity;
+  title: string;
+  description: string | null;
+  page_url: string | null;
+  user_agent: string | null;
+  status: TesterFeedbackStatus;
+  admin_note: string | null;
+  created_at: string;
+  updated_at: string;
+};

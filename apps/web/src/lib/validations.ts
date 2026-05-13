@@ -88,3 +88,18 @@ export const grantRoleByEmailSchema = z.object({
 export const ragChatSchema = z.object({
   question: z.string().min(1).max(2000),
 });
+
+export const testerFeedbackSchema = z.object({
+  category: z.enum(["bug", "feature", "question", "other"]),
+  severity: z.enum(["low", "normal", "high", "critical"]).default("normal"),
+  title: z.string().min(1).max(200),
+  description: z.string().max(5000).optional().default(""),
+  page_url: z.string().max(1000).optional().default(""),
+  user_agent: z.string().max(500).optional().default(""),
+});
+
+export const updateTesterFeedbackStatusSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(["new", "in_progress", "resolved", "wontfix"]),
+  adminNote: z.string().max(2000).optional().default(""),
+});
