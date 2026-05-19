@@ -166,8 +166,10 @@
       linear-gradient(135deg, rgb(210 168 90 / 0.1), transparent 20rem),
       radial-gradient(circle at 82% 8%, rgb(111 141 88 / 0.18), transparent 26rem),
       radial-gradient(circle at 18% 0%, rgb(210 168 90 / 0.13), transparent 22rem),
+      radial-gradient(ellipse at 50% 120%, rgb(168 185 149 / 0.10), transparent 38rem),
       linear-gradient(180deg, var(--color-garden-olive), #1b2d23 36rem, #15221b);
-    background-size: 22px 22px, auto, auto, auto, auto;
+    background-size: 22px 22px, auto, auto, auto, auto, auto;
+    background-attachment: fixed, scroll, scroll, scroll, scroll, scroll;
     min-height: 100vh;
   }
 
@@ -207,9 +209,18 @@
     @apply relative overflow-hidden rounded-lg border border-border bg-card/58 p-6 shadow-xl shadow-black/20 backdrop-blur-md sm:p-8;
   }
 
+  .dashboard-hero > :not(.garden-backdrop) {
+    @apply relative z-10;
+  }
+
   .dashboard-hero::before {
     content: "";
-    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/70;
+    @apply pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-primary/80 to-transparent;
+  }
+
+  .dashboard-hero::after {
+    content: "";
+    @apply pointer-events-none absolute -right-12 -top-16 z-0 size-56 rounded-full bg-primary/10 blur-3xl;
   }
 
   .dashboard-title {
@@ -241,7 +252,25 @@
   }
 
   .dashboard-card {
-    @apply h-full rounded-lg border border-border bg-card/62 p-5 shadow-lg shadow-black/20 transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:bg-card/78 hover:shadow-primary/10;
+    @apply relative h-full overflow-hidden rounded-lg border border-border bg-card/62 p-5 shadow-lg shadow-black/20 transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:bg-card/78 hover:shadow-xl hover:shadow-primary/15;
+  }
+
+  .dashboard-card::before {
+    content: "";
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-primary/80 to-transparent opacity-0 transition-all duration-500;
+  }
+
+  .dashboard-card:hover::before {
+    @apply scale-x-100 opacity-100;
+  }
+
+  .dashboard-card::after {
+    content: "";
+    @apply pointer-events-none absolute -bottom-16 -right-16 size-32 rounded-full bg-primary/0 blur-2xl transition-colors duration-500;
+  }
+
+  .dashboard-card:hover::after {
+    @apply bg-primary/15;
   }
 
   .public-shell {
@@ -256,14 +285,18 @@
     @apply relative overflow-hidden rounded-lg border border-border bg-card/48 p-7 shadow-2xl shadow-black/20 backdrop-blur-md sm:p-10 lg:p-14;
   }
 
+  .public-hero > :not(.garden-backdrop) {
+    @apply relative z-10;
+  }
+
   .public-hero::before {
     content: "";
-    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/75;
+    @apply pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-primary/85 to-transparent;
   }
 
   .public-hero::after {
     content: "";
-    @apply pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-primary/10 blur-3xl;
+    @apply pointer-events-none absolute -right-16 -top-20 z-0 size-72 rounded-full bg-primary/10 blur-3xl;
   }
 
   .public-heading {
@@ -306,8 +339,99 @@
   }
 }
 
+@keyframes garden-sway {
+  0%, 100% {
+    transform: rotate(-1.2deg) translateY(0);
+  }
+  50% {
+    transform: rotate(1.4deg) translateY(-4px);
+  }
+}
+
+@keyframes garden-sway-slow {
+  0%, 100% {
+    transform: rotate(-0.8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(1deg) translateY(-6px);
+  }
+}
+
+@keyframes garden-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate(6px, -8px) rotate(2deg);
+  }
+}
+
+@keyframes garden-sun-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes garden-glow-moss {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+.garden-sway {
+  animation: garden-sway 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.garden-sway-slow {
+  animation: garden-sway-slow 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+.garden-drift {
+  animation: garden-drift 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+.garden-sun {
+  animation: garden-sun-pulse 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.garden-glow-moss {
+  animation: garden-glow-moss 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.garden-rise-stagger > * {
+  animation: garden-rise 620ms ease-out both;
+}
+
+.garden-rise-stagger > *:nth-child(1) { animation-delay: 60ms; }
+.garden-rise-stagger > *:nth-child(2) { animation-delay: 150ms; }
+.garden-rise-stagger > *:nth-child(3) { animation-delay: 240ms; }
+.garden-rise-stagger > *:nth-child(4) { animation-delay: 330ms; }
+.garden-rise-stagger > *:nth-child(5) { animation-delay: 420ms; }
+.garden-rise-stagger > *:nth-child(6) { animation-delay: 510ms; }
+
 @media (prefers-reduced-motion: reduce) {
   .garden-rise,
+  .garden-rise-stagger > *,
+  .garden-sway,
+  .garden-sway-slow,
+  .garden-drift,
+  .garden-sun,
+  .garden-glow-moss,
   .dashboard-card {
     animation: none;
     transition: none;
