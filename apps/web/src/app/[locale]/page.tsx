@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HeroCtas } from "@/features/marketing/hero-ctas";
 import { SiteHeader } from "@/components/site-header";
+import { GroveBackdrop } from "@/components/garden/grove-backdrop";
+import { OliveDivider } from "@/components/garden/olive-illustrations";
 import { createClient } from "@/lib/supabase/server";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -29,6 +31,7 @@ export default async function HomePage({ params }: Props) {
       <main className="flex flex-1 flex-col">
         <section className="public-shell flex py-10 text-center sm:py-14 md:min-h-[calc(100svh-4rem)] md:items-center md:py-16">
           <div className="public-hero mx-auto w-full min-w-0 max-w-5xl">
+            <GroveBackdrop />
             <p className="public-kicker mb-5">{t("badge")}</p>
             <h1 className="font-heading mx-auto max-w-[11ch] text-5xl leading-[0.95] font-semibold tracking-[0.01em] text-foreground sm:max-w-none sm:text-6xl md:text-7xl">
               {t("title")}
@@ -39,6 +42,7 @@ export default async function HomePage({ params }: Props) {
             <div className="mt-9 flex flex-wrap justify-center gap-4">
               <HeroCtas loggedIn={Boolean(user)} />
             </div>
+            <OliveDivider className="mx-auto mt-10 h-4 w-64 opacity-70" />
           </div>
         </section>
 
@@ -51,7 +55,7 @@ export default async function HomePage({ params }: Props) {
             <p className="public-lead md:max-w-md">{t("subtitle")}</p>
           </div>
 
-          <div className="grid gap-0 md:grid-cols-3">
+          <div className="garden-rise-stagger grid gap-0 md:grid-cols-3">
             <article className="public-panel md:border-r-0">
               <h3 className="public-card-title">
                 {t("f1Title")}
